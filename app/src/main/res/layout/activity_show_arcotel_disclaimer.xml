@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    tools:actionBarNavMode="standard"
+    tools:context=".ShowArcotelDisclaimerActivity">
+
+    <TextView
+        android:id="@+id/textViewAboutTitle"
+        style="@style/TextoMedioTech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="94dp"
+        android:layout_marginLeft="94dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="94dp"
+        android:layout_marginRight="94dp"
+        android:text="Acerca de Arcotel Network Tools"
+        android:textAppearance="@style/TextoPequeTechGray"
+        android:textColor="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewAboutDetail"
+        android:layout_width="0dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:scrollbars="vertical"
+        android:text="La presente aplicación ha sido desarrollada para que los usuarios de las operadoras móviles del país sean parte activa del monitoreo y mejora de la calidad del servicio tanto de telefonía como de internet móvil y fijo, esto se logrará realizando mediciones periódicas del estado de calidad del servicio en diferentes ubicaciones y a diferentes horas, estas mediciones serán analizadas posteriormente en nuestros servidores para la toma de decisiones. Estamos convencidos que entre todos lograremos la meta de tener una telefonía móvil de calidad."
+        android:textAppearance="@style/Regular"
+        android:textIsSelectable="true"
+        android:verticalScrollbarPosition="right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAboutTitle" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAboutDetail" />
+
+    <TextView
+        android:id="@+id/textViewDeviceInfoTitle"
+        android:layout_width="105dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:text="Device Info"
+        android:textAppearance="@style/TextoPequeTech"
+        android:textColor="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    <TextView
+        android:id="@+id/textViewDeviceInfoDetail"
+        android:layout_width="0dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:text="NAME: Wiyoming Redmi PRO \nANDROID: 9\nSDK ver: 9"
+        android:textAppearance="@style/Regular"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDeviceInfoTitle" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDeviceInfoDetail" />
+
+    <TextView
+        android:id="@+id/textViewDisclaimerTitle"
+        android:layout_width="105dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="150dp"
+        android:layout_marginRight="150dp"
+        android:text="Disclaimer"
+        android:textAppearance="@style/TextoPequeTech"
+        android:textColor="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="0dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:scrollbars="vertical"
+        android:text="El presente software captura datos relacionados a cobertura, estado de servicio de internet, ubicación de la sesión de captura y las envía a los servidores de Arcotel en internet, el objetivo de esta captura es guardar una base de datos de calidad de cobertura y servicio, el software no captura información personal ni sensible relacionada a la ubicación."
+        android:textAppearance="@style/Regular"
+        android:textIsSelectable="true"
+        android:verticalScrollbarPosition="right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewDisclaimerTitle" />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+    <TextView
+        android:id="@+id/textViewCopyrightTitle"
+        android:layout_width="112dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="156dp"
+        android:layout_marginLeft="156dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginRight="156dp"
+        android:text="Copyright"
+        android:textAppearance="@style/TextoPequeTech"
+        android:textColor="@color/textColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+    <TextView
+        android:id="@+id/textViewCopyrightDetail"
+        android:layout_width="0dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:scrollbars="vertical"
+        android:text="Copyright 2020 FDM-TECH, info@fdm-tech.com.\nArcotel Network Tools es un producto de FDM-TECH. Todo el software desarrollado para esta aplicación es propiedad intelectual de FDM-TECH, las librerías y software de tercero rigen bajo las licencias de sus propietarios."
+        android:textAppearance="@style/Regular"
+        android:textIsSelectable="true"
+        android:verticalScrollbarPosition="right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCopyrightTitle" />
+
+    <TextView
+        android:id="@+id/textViewMaadeWithLove"
+        android:layout_width="146dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="118dp"
+        android:layout_marginLeft="118dp"
+        android:layout_marginEnd="118dp"
+        android:layout_marginRight="118dp"
+        android:layout_marginBottom="4dp"
+        android:text="Made with \u2764\uFE0F in Ecuador"
+        android:textAppearance="@style/Regular"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#383839</color>
+    <color name="colorPrimaryDark">#383839</color>
+    <color name="colorAccent">#383839</color>
+    <color name="textColor">#3af3ff</color>
+    <color name="buttonBackground">#3af3ff</color>
+    <color name="textColor2">#242e3a</color>
+    <color name="colorPrimary2">#1d252e</color>
+
+    <color name="colorCardDark">#161212</color>
+
+    <color name="colorAccentFaded">#6603A9F4</color>
+
+    <color name="activeTabColor">#FFFFFF</color>
+    <color name="inactiveTabColor">#A2A2A2</color>
+
+    <color name="black">#FF000000</color>
+    <color name="whitegrey">#FFF2F2F2</color>
+</resources>

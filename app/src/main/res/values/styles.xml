@@ -1,0 +1,98 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorCardDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="TextoMedioTech" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">23sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FEFFFF</item>
+    </style>
+
+    <style name="TextoPequeTech" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FEFFFF</item>
+    </style>
+
+    <style name="TextoMedioTechGray" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">23sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FEFFFF</item>
+    </style>
+
+    <style name="TextoPequeTechGray" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">kanit_black</item>
+        <item name="fontFamily">kanit_black</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FEFFFF</item>
+    </style>
+
+    <style name="Regular">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/opensans_light</item>
+        <item name="fontFamily">@font/opensans_light</item>
+        <item name="android:textColor">#FEFFFF</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="NetworkSurveyTheme" parent="Theme.AppCompat.DayNight">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!--<<item name="android:colorBackgroundFloating">@color/colorCardDark</item>-->
+        <!--<item name="cardStyle">@style/CardViewTheme</item>-->
+    </style>
+
+    <style name="BottomNavigationTheme" parent="NetworkSurveyTheme">
+        <item name="colorPrimary">@color/activeTabColor</item>
+        <item name="android:textColorSecondary">@color/inactiveTabColor</item>
+    </style>
+
+    <style name="HeaderBar">
+        <item name="android:background">#303F9F</item>
+    </style>
+
+
+    <style name="FullHeightDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@color/colorAccent</item>
+        <item name="android:windowMinWidthMajor">15dp</item>
+        <item name="android:windowMinWidthMinor">13dp</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme">Theme</style>
+
+
+</resources>

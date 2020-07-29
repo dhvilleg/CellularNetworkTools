@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/main_advanced_cell_info"
+        android:icon="@drawable/ic_cellular"
+        android:title="@string/nav_cellular" />
+    <item
+        android:id="@+id/main_show_stats"
+        android:icon="@drawable/ic_calculator"
+        android:title="@string/nav_wifi" />
+    <item
+        android:id="@+id/main_setup_application"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/nav_gnss" />
+</menu>

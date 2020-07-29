@@ -1,0 +1,102 @@
+<resources>
+    <string name="app_name">Arcotel Network Tools</string>
+    <string name="tab_network_info">Network</string>
+    <string name="tab_location_dev">Speed Test</string>
+    <string name="tab_device_information">Dev Info</string>
+    <string name="tab_device_location">Colectar</string>
+    <string name="txtview_OperatorID">ID de operador</string>
+    <string name="txtview_OperatorName">Nombre Opera</string>
+    <string name="txtview_Signal">Señal</string>
+    <string name="txtview_OperatorID_Set"></string>
+    <string name="txtview_OperatorName_set"></string>
+    <string name="txtview_Signal_Set"></string>
+    <string name="txtview_IsConected_ro">Esta Conectado</string>
+    <string name="txtview_IsConected_rw"></string>
+    <string name="txtview_PhoneType_ro">Phone Type</string>
+    <string name="txtview_PhoneType_rw"></string>
+    <string name="txtview_NetworkType_ro">Network Type</string>
+    <string name="txtview_NetworkType_rw"></string>
+    <string name="txtview_CountryISO_ro">Country ISO</string>
+    <string name="txtview_CountryISO_rw"></string>
+    <string name="txtview_StrengthSignal_ro">Potencia</string>
+    <string name="txtview_StrengthSignal_rw"></string>
+    <string name="txtview_QualitySignal_ro">Señal</string>
+    <string name="txtview_QualitySignal_rw"></string>
+    <string name="hello_world">Activity de prueba para conseguir geolocalización</string>
+    <string name="action_settings">Settings</string>
+    <string name="txtview_networkInternetType_ro">Tipo Internet</string>
+    <string name="txtview_networkInternetType_rw"></string>
+    <string name="txtview_mobileUploadSpeed_ro">Mob Upload Kbps</string>
+    <string name="txtview_mobileUploadSpeed_rw"></string>
+    <string name="txtview_mobileDownloadSpeed_ro">Mob Downl kbps</string>
+    <string name="txtview_mobileDownloadSpeed_rw"></string>
+    <string name="txtview_wifiDownloadSpeed_ro">Wifi speed Mbps</string>
+    <string name="txtview_wifiDownloadSpeed_rw"></string>
+
+    <string name="google_maps_key">AIzaSyBDmHDh1IcodepUcWz6mxGdxDOmLX8x76Y</string>
+
+    <string name="get_information">Get Information</string>
+    <string name="hard_soft_info">Hardware and Software Information</string>
+    <string name="serial">SERIAL: </string>
+    <string name="model">MODEL: </string>
+    <string name="id">ID: </string>
+    <string name="manufacturer">MANUFACTURER: </string>
+    <string name="brand">BRAND: </string>
+    <string name="type">TYPE: </string>
+    <string name="user">USER: </string>
+    <string name="base">BASE: </string>
+    <string name="incremental">INCREMENTAL: </string>
+    <string name="sdk">SDK: </string>
+    <string name="board">BOARD: </string>
+    <string name="host">HOST: </string>
+    <string name="fingerprint">FINGERPRINT: </string>
+    <string name="versioncode">VERSION CODE: </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps_get_location">Map</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_cellular">Avanzado</string>
+    <string name="nav_wifi">Estadisticas</string>
+    <string name="nav_gnss">Configuración</string>
+
+
+    <string name="action_start_cellular_logging">Start Cellular Logging</string>
+    <string name="action_stop_cellular_logging">Stop Cellular Logging</string>
+
+    <string name="action_start_wifi_logging">Start Wi-Fi Logging</string>
+    <string name="action_stop_wifi_logging">Stop Wi-Fi Logging</string>
+
+    <string name="action_start_gnss_logging">Start GNSS Logging</string>
+    <string name="action_stop_gnss_logging">Stop GNSS Logging</string>
+
+    <string name="grpc_connection_title">Server Connection</string>
+    <string name="mqtt_connection_title_full">MQTT Broker Connection</string>
+    <string name="settings">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_activity_show_arcotel_disclaimer">ShowArcotelDisclaimerActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>
