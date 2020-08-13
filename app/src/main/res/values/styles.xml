@@ -61,6 +61,14 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="Medium">
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">@font/opensans_light</item>
+        <item name="fontFamily">@font/opensans_light</item>
+        <item name="android:textColor">#FEFFFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="NetworkSurveyTheme" parent="Theme.AppCompat.DayNight">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>

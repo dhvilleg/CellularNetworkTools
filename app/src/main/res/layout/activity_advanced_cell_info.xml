@@ -4,6 +4,156 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    tools:actionBarNavMode="standard"
     tools:context=".AdvancedCellInfoActivity">
+
+
+
+    <ImageView
+        android:id="@+id/imageViewACI"
+        android:layout_width="22dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cellsignalstatussreen" />
+
+    <TextView
+        android:id="@+id/textViewTechCellACI"
+        style="@style/TextoMedioTech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:text="LTE"
+        app:layout_constraintStart_toEndOf="@+id/imageViewACI"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewOperatorNameACI"
+        style="@style/TextoMedioTechGray"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="Movistar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/dividerHeaderInterCon2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewOperatorNameACI" />
+
+    <TextView
+        android:id="@+id/textViewCarrierInfo"
+        android:layout_width="160dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/borde_redondeado"
+        android:singleLine="false"
+        android:text="OPERADOR: Movistar\nMCC: 740\nMNC: 0"
+        android:textAppearance="@style/Medium"
+        android:textIsSelectable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerHeaderInterCon2" />
+
+    <TextView
+        android:id="@+id/textViewStrengthInfo"
+        android:layout_width="160dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/borde_redondeado"
+        android:text="RSRP: -91 dBm\nRSRQ: -13 dB\nRSSNR: 9.6 dB"
+        android:textAppearance="@style/Medium"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerHeaderInterCon2" />
+
+    <TextView
+        android:id="@+id/textViewCellDescInfo"
+        android:layout_width="0dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/borde_redondeado"
+        android:text="TAC: 9007\nCID: 7246526\neNB ID: 28306\nPCI: 143"
+        android:textAppearance="@style/Medium"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewStrengthInfo" />
+
+    <View
+        android:id="@+id/dividerHeaderInterCon3"
+        android:layout_width="393dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCellDescInfo"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/textViewInternetInfo"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/borde_redondeado"
+        android:text="ISP: Movistar\nIP PUBLIC: 232.34.2.12"
+        android:textAppearance="@style/Medium"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerHeaderInterCon3" />
+
+    <View
+        android:id="@+id/dividerHeaderInterCon4"
+        android:layout_width="393dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/cardview_dark_background"
+        app:layout_constraintTop_toBottomOf="@+id/textViewInternetInfo"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/textViewLocationInfo"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/borde_redondeado"
+        android:text="LATITUD: -0.2602362\nLONGITUD: -78.5496498"
+        android:textAppearance="@style/Medium"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dividerHeaderInterCon4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

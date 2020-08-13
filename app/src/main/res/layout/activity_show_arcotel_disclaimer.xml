@@ -55,8 +55,8 @@
 
     <TextView
         android:id="@+id/textViewDeviceInfoTitle"
-        android:layout_width="105dp"
-        android:layout_height="19dp"
+        android:layout_width="99dp"
+        android:layout_height="24dp"
         android:layout_marginStart="100dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="4dp"
@@ -96,7 +96,7 @@
 
     <TextView
         android:id="@+id/textViewDisclaimerTitle"
-        android:layout_width="105dp"
+        android:layout_width="94dp"
         android:layout_height="23dp"
         android:layout_marginStart="150dp"
         android:layout_marginLeft="150dp"
@@ -140,8 +140,8 @@
 
     <TextView
         android:id="@+id/textViewCopyrightTitle"
-        android:layout_width="112dp"
-        android:layout_height="28dp"
+        android:layout_width="89dp"
+        android:layout_height="25dp"
         android:layout_marginStart="156dp"
         android:layout_marginLeft="156dp"
         android:layout_marginTop="4dp"

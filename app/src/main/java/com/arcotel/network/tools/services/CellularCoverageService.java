@@ -10,11 +10,10 @@ import android.os.Message;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.arcotel.network.tools.MainActivity;
+import com.arcotel.network.tools.AdvancedCellInfoActivity;
 import com.arcotel.network.tools.librarys.ScanCellularActivity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,9 +24,9 @@ public class CellularCoverageService extends Service {
 
     private Timer temporizador = new Timer();
     private static final long INTERVALO_ACTUALIZACION = 10; // En ms
-    public static MainActivity UPDATE_LISTENER_RSRP;
-    public static MainActivity UPDATE_LISTENER_RSSNR;
-    public static MainActivity UPDATE_LISTENER_RSRQ;
+    public static AdvancedCellInfoActivity UPDATE_LISTENER_RSRP;
+    public static AdvancedCellInfoActivity UPDATE_LISTENER_RSSNR;
+    public static AdvancedCellInfoActivity UPDATE_LISTENER_RSRQ;
     private Handler handler;
     private String cellStrengthRsrp="";
     private String cellStrengthRssnr="";
@@ -39,7 +38,7 @@ public class CellularCoverageService extends Service {
         scanCellularActivity = new ScanCellularActivity(UPDATE_LISTENER_RSRP.getApplicationContext());
     }
 
-    public static void setUpdateListener(MainActivity cellularCoverageService) {
+    public static void setUpdateListener(AdvancedCellInfoActivity cellularCoverageService) {
         UPDATE_LISTENER_RSRP = cellularCoverageService;
         UPDATE_LISTENER_RSSNR = cellularCoverageService;
         UPDATE_LISTENER_RSRQ = cellularCoverageService;
@@ -98,17 +97,9 @@ public class CellularCoverageService extends Service {
                         } catch (NoSuchMethodException e) {
                             e.printStackTrace();
                         }
-                        Log.d("SEÑAL_RUIDO","valor señar ruido es "+ snr[0]);
-                        Log.d("IniciarCapturaRSRP "," el valor cellStrengthRsrp es"+cellStrengthRsrp);
-                        Log.d("IniciarCapturaRSRQ "," el valor cellStrengthRsrp es"+cellStrengthRsrq);
                     }
                 }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-
-
-
                 Looper.loop();
-
-
             }
         }).start();
     }

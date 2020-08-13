@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Looper;
 import android.telephony.CellIdentityCdma;
 import android.telephony.CellIdentityGsm;
 import android.telephony.CellIdentityLte;
@@ -190,6 +191,26 @@ public class ScanCellularActivity {
         String operatoId = telephonyManager.getNetworkOperator();
         return operatoId;
     }
+    public String getLteRssnr(TelephonyManager telephonyManager){
+        final double[] snr = new double[1];
+        final boolean quitLooper = false;
+        telephonyManager.listen(new PhoneStateListener(){
+            public void onSignalStrengthsChanged(SignalStrength signalStrength)
+            {
+                try {
+                    snr[0] = (double) ((Integer) SignalStrength.class.getMethod("getLteRssnr").invoke(signalStrength)/10D);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+                Log.d("SEÑAL_RUIDO","valor señar ruido es "+ snr[0]);
+            }
+        }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        return ""+snr[0];
+    }
 
 
 
@@ -226,9 +247,7 @@ public class ScanCellularActivity {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 strength.add(""+cellSignalStrengthLte.getRsrp()); //RSRP: Reference Signal Received Power
                                 strength.add(""+cellSignalStrengthLte.getRsrq()); //RSRQ: Reference Signal Received Quality
-                                strength.add(""+cellInfoLte.getCellSignalStrength().getRssnr()); //RSSNR: Reference Signal Signal to Noise Ratio
-
-                                //strength.add(""+getLterssnr());
+                                //strength.add(""+getLteRssnr(telephonyManager));
                                 strength.add(""+cellSignalStrengthLte.getTimingAdvance()); //TA: Timing Advance
                                 strength.add(""+cellSignalStrengthLte.getCqi());// CQI: Channel Quality Indicator
                             }
@@ -247,6 +266,7 @@ public class ScanCellularActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public ArrayList<Integer> getDevCellIdentity(){
         ArrayList<Integer> cellItentity = new ArrayList<Integer>();
         @SuppressLint("MissingPermission") List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //This will give info of all sims present inside your mobile

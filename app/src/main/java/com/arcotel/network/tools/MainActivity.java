@@ -22,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.arcotel.network.tools.services.CellularCoverageService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -77,7 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
         //CellularCoverageService.setUpdateListener(this);
         //iniciarCellularCoverageService();
+        Toast.makeText(MainActivity.this, "OnCreate", Toast.LENGTH_LONG).show();
 
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(MainActivity.this, "onResume", Toast.LENGTH_LONG).show();
         Button startButton = (Button) findViewById(R.id.buttonStartCapture);
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -91,40 +98,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         // Antes de cerrar la aplicacion se para el servicio (el cronometro)
-        pararCellularCoverageService();
+        //
         super.onDestroy();
     }
 
-    /**
-     * Inicia el servicio
-     */
 
-    private void iniciarCellularCoverageService() {
-        Intent service = new Intent(this, CellularCoverageService.class);
-        startService(service);
-    }
-
-    /**
-     * Finaliza el servicio
-     */
-
-    private void pararCellularCoverageService() {
-        Intent service = new Intent(this, CellularCoverageService.class);
-        stopService(service);
-    }
-
-    /**
-     * Actualiza en la interfaz de usuario el tiempo cronometrado
-     *
-     * @param cellStrengthRsrp
-     */
-
-    public void actualizaRsrp(String cellStrengthRsrp,String cellStrengthRssnr,String cellStrengthRsrq) {
-        textViewRsrp.setText("Rsrp es "+cellStrengthRsrp+" dBm");
-        textViewRsrq.setText("Rsrq es "+cellStrengthRsrq+" dB");
-        textViewRssnr.setText("Rssnr es "+cellStrengthRssnr+" dB");
-    }
-
+    //Listener del boton arcotel que llama a la activity disclaimer
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -132,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //Constructor del boton de arcotel que llama a la activity disclaimer
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -151,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Método que publica el ratting bar
     public void showRatingBar(){
         float userRankValue=0;
         rankDialog = new Dialog(MainActivity.this, R.style.FullHeightDialog);
@@ -171,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         rankDialog.show();
     }
 
+    //metodo para invocar el Booton bar que llama a las activities de avanzado, estadísticas y settings
     public void onBottonNavigationPress(){
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -198,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    //Sección para asegurar la obtención de permisos requeridos por la aplicación
     private void showPhoneStatePermission(String permission) {
         Log.d("Entra showPhoneState","la variable permiso tiene: "+permission);
         int permissionCheck = ContextCompat.checkSelfPermission(
@@ -216,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults) {
         switch (requestCode) {
@@ -229,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 }
         }
     }
-
     private void showExplanation(String title,String message,final String permission,final int permissionRequestCode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title)
@@ -241,7 +221,6 @@ public class MainActivity extends AppCompatActivity {
                 });
         builder.create().show();
     }
-
     private void requestPermission(String permissionName, int permissionRequestCode) {
         Log.d("Entra requestPermission","la variable permiso tiene: "+permissionName);
         ActivityCompat.requestPermissions(this,
