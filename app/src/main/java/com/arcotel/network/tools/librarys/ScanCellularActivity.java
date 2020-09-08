@@ -6,7 +6,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.Looper;
 import android.telephony.CellIdentityCdma;
 import android.telephony.CellIdentityGsm;
 import android.telephony.CellIdentityLte;
@@ -24,11 +23,15 @@ import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
 import androidx.annotation.RequiresApi;
 
 import com.arcotel.network.tools.MainActivity;
+import com.arcotel.network.tools.interfaces.DataListener;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,17 +42,25 @@ public class ScanCellularActivity {
     private static int AVERAGE=-80;
     private static int GOOD=-75;
     private static int VERY_GOOD=-70;
-    //public double snr = 0;
+    public static final String LTE_RSSNR = "IDUNICO_001";
+    public static MainActivity UPDATE_LISTENER_RSRP;
+    public String phonestate;
 
+    private SignalStrength      signalStrength;
+    private TelephonyManager    telephonyManager;
+    private final static String LTE_TAG             = "LTE_Tag";
+    private final static String LTE_SIGNAL_STRENGTH = "getLteSignalStrength";
 
-    TelephonyManager telephonyManager;
+    //TelephonyManager telephonyManager;
     ConnectivityManager connMgr;
     Context context;
+    NetworkInfo networkInfo;
 
     public ScanCellularActivity(Context context) {
         this.context = context;
         this.telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         this.connMgr = (ConnectivityManager) context.getSystemService(Activity.CONNECTIVITY_SERVICE);
+
     }
 
     public String getPhoneSignalType() {
@@ -140,6 +151,7 @@ public class ScanCellularActivity {
         return operatorMccMnc;
 
     }
+
     public String getDevMncId() {
         String operatorMccMnc = "";
         operatorMccMnc = telephonyManager.getNetworkOperator().substring(3);
@@ -147,17 +159,14 @@ public class ScanCellularActivity {
 
     }
 
-
-    public String getDevIsConected() {
-        String conectado;
-        NetworkInfo networkInfo = connMgr != null ? connMgr.getActiveNetworkInfo() : null;
-        boolean isConected = networkInfo != null && networkInfo.isConnected();
-        if (isConected) {
-            conectado = "conectado";
-        } else {
-            conectado = "No conectado";
+    public boolean getDevIsConected() {
+        try {
+            InetAddress address = InetAddress.getByName("www.google.com");
+            return !address.equals("");
+        } catch (UnknownHostException e) {
+            // Log error
         }
-        return conectado;
+        return false;
     }
 
     public String getDevCountryIso() {
@@ -191,9 +200,35 @@ public class ScanCellularActivity {
         String operatoId = telephonyManager.getNetworkOperator();
         return operatoId;
     }
-    public String getLteRssnr(TelephonyManager telephonyManager){
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String serviceStateChanged(){
+        String phonestateString = "";
+        int phonestateInt = telephonyManager.getServiceState().getState();
+
+        if(phonestateInt == 0){
+            phonestateString = "STATE_IN_SERVICE";
+        }
+        else if(phonestateInt == 1){
+            phonestateString = "STATE_OUT_OF_SERVICE";
+        }
+        else if(phonestateInt == 2){
+            phonestateString = "STATE_EMERGENCY_ONLY";
+        }
+        else if(phonestateInt == 3){
+            phonestateString = "STATE_POWER_OFF";
+        }
+
+        //Log.d("serviceStateChanged","valor Estado "+phonestate);
+
+        return phonestateString;
+    }
+
+    public void getLteRssnr(final DataListener dataListener){
+
         final double[] snr = new double[1];
-        final boolean quitLooper = false;
+
+
         telephonyManager.listen(new PhoneStateListener(){
             public void onSignalStrengthsChanged(SignalStrength signalStrength)
             {
@@ -206,57 +241,57 @@ public class ScanCellularActivity {
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
-                Log.d("SEÑAL_RUIDO","valor señar ruido es "+ snr[0]);
+                Log.d("en ScanCellularAct","valor señar ruido es "+ snr[0]);
+                dataListener.getDataRssnrRecived(""+snr[0]);
+
             }
         }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        return ""+snr[0];
+
     }
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public ArrayList<String> getDevStrengthSignal(){
+    public ArrayList<Integer> getDevStrengthSignal(){
 
-        ArrayList<String> strength = new ArrayList<String>();
+        ArrayList<Integer> strength = new ArrayList<>();
         @SuppressLint("MissingPermission") List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();   //This will give info of all sims present inside your mobile
         if(cellInfos != null) {
             for (int i = 0 ; i < cellInfos.size() ; i++) {
                 if (cellInfos.get(i).isRegistered()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         if (cellInfos.get(i) instanceof CellInfoWcdma) {
-                            Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoWcdma");
+                            //Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoWcdma");
                             CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfos.get(i);
                             CellSignalStrengthWcdma cellSignalStrengthWcdma = cellInfoWcdma.getCellSignalStrength();
-                            strength.add(""+cellSignalStrengthWcdma.getDbm());
-                            strength.add(""+cellSignalStrengthWcdma.getAsuLevel());
-                            strength.add(""+cellSignalStrengthWcdma.getLevel());
+                            strength.add(cellSignalStrengthWcdma.getDbm());
+                            strength.add(cellSignalStrengthWcdma.getAsuLevel());
+                            strength.add(cellSignalStrengthWcdma.getLevel());
                         } else if (cellInfos.get(i) instanceof CellInfoGsm) {
-                            Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoGsm");
+                            //Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoGsm");
                             CellInfoGsm cellInfogsm = (CellInfoGsm) cellInfos.get(i);
                             CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
-                            strength.add(""+cellSignalStrengthGsm.getDbm());
-                            strength.add(""+cellSignalStrengthGsm.getAsuLevel());
-                            strength.add(""+cellSignalStrengthGsm.getLevel());
+                            strength.add(cellSignalStrengthGsm.getDbm());
+                            strength.add(cellSignalStrengthGsm.getAsuLevel());
+                            strength.add(cellSignalStrengthGsm.getLevel());
                         } else if (cellInfos.get(i) instanceof CellInfoLte) {
-                            Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoLte");
+                            //Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoLte");
                             CellInfoLte cellInfoLte = (CellInfoLte) cellInfos.get(i);
                             CellSignalStrengthLte cellSignalStrengthLte = cellInfoLte.getCellSignalStrength();
-                            strength.add(""+cellSignalStrengthLte.getDbm());
-                            strength.add(""+cellSignalStrengthLte.getAsuLevel());
-                            strength.add(""+cellSignalStrengthLte.getLevel());
+                            strength.add(cellSignalStrengthLte.getDbm());
+                            strength.add(cellSignalStrengthLte.getAsuLevel());
+                            strength.add(cellSignalStrengthLte.getLevel());
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                strength.add(""+cellSignalStrengthLte.getRsrp()); //RSRP: Reference Signal Received Power
-                                strength.add(""+cellSignalStrengthLte.getRsrq()); //RSRQ: Reference Signal Received Quality
-                                //strength.add(""+getLteRssnr(telephonyManager));
-                                strength.add(""+cellSignalStrengthLte.getTimingAdvance()); //TA: Timing Advance
-                                strength.add(""+cellSignalStrengthLte.getCqi());// CQI: Channel Quality Indicator
+                                strength.add(cellSignalStrengthLte.getRsrp()); //RSRP: Reference Signal Received Power
+                                strength.add(cellSignalStrengthLte.getRsrq()); //RSRQ: Reference Signal Received Quality
+                                //strength.add(getLteRssnr(telephonyManager));
+                                strength.add(cellSignalStrengthLte.getTimingAdvance()); //TA: Timing Advance
+                                strength.add(cellSignalStrengthLte.getCqi());// CQI: Channel Quality Indicator
                             }
                         } else if (cellInfos.get(i) instanceof CellInfoCdma) {
                             CellInfoCdma cellInfoCdma = (CellInfoCdma) cellInfos.get(i);
                             CellSignalStrengthCdma cellSignalStrengthCdma = cellInfoCdma.getCellSignalStrength();
-                            strength.add(""+cellSignalStrengthCdma.getDbm());
-                            strength.add(""+cellSignalStrengthCdma.getAsuLevel());
-                            strength.add(""+cellSignalStrengthCdma.getLevel());
+                            strength.add(cellSignalStrengthCdma.getDbm());
+                            strength.add(cellSignalStrengthCdma.getAsuLevel());
+                            strength.add(cellSignalStrengthCdma.getLevel());
                         }
                     }
                 }
@@ -264,7 +299,6 @@ public class ScanCellularActivity {
         }
         return strength;
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public ArrayList<Integer> getDevCellIdentity(){
@@ -327,7 +361,6 @@ public class ScanCellularActivity {
         return cellItentity;
     }
 
-
     public String getSignalQuality(int dbm){
         String signalQuality="";
         if(dbm >= VERY_GOOD){
@@ -346,5 +379,30 @@ public class ScanCellularActivity {
         return signalQuality;
     }
 
+    public String getNetworkConectivityType(){
+        networkInfo = connMgr.getActiveNetworkInfo();
+        String networkConectivityType ="";
+        if(networkInfo == null){
+            Log.d("RED","NULL");
+            networkConectivityType = "NO_CONECTION";
+        }
+        else if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI){
+            Log.d("RED","wifi");
+            networkConectivityType = "WIFI";
+        } else if(networkInfo.getType() == ConnectivityManager.TYPE_MOBILE){
+            Log.d("RED","Mobile");
+            networkConectivityType = "MOBILE";
+        }
 
+        return networkConectivityType;
+    }
+
+    public ArrayList<String> getInternetIspIpInfo(){
+        String ispName = "Movistar";
+        String ipAddress = "192.168.1.1";
+        ArrayList<String> internetInformationArray = new ArrayList<>();
+        internetInformationArray.add(ispName);
+        internetInformationArray.add(ipAddress);
+        return internetInformationArray;
+    }
 }

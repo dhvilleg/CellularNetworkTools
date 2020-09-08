@@ -14,16 +14,23 @@
         android:allowBackup="true"
         android:icon="@drawable/arcotel_logo"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@drawable/arcotel_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <service
-            android:name=".services.CellularCoverageService"
+            android:name=".services.AdvancedCellInfoUIService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".services.ConectivityScanService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,8 +39,10 @@
         </activity>
         <activity
             android:name=".AdvancedCellInfoActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="Información de red avanzada"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
@@ -42,8 +51,10 @@
         </activity>
         <activity
             android:name=".SetupActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="Configuración"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
@@ -52,19 +63,22 @@
         </activity>
         <activity
             android:name=".StatsActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="Estadísticas"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".ShowArcotelDisclaimerActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="Información"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
