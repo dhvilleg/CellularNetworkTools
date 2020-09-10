@@ -15,6 +15,8 @@ public class GetSpeedTestHostsHandler extends Thread {
     HashMap<Integer, List<String>> mapValue = new HashMap<>();
     double selfLat = 0.0;
     double selfLon = 0.0;
+    String selip = "";
+    String selisp = "";
     boolean finished = false;
 
 
@@ -33,6 +35,14 @@ public class GetSpeedTestHostsHandler extends Thread {
     public double getSelfLon() {
         return selfLon;
     }
+
+    public String getSelfLip() {
+        return selip;
+    }
+    public String getSelfLisp() {
+        return selisp;
+    }
+
 
     public boolean isFinished() {
         return finished;
@@ -58,6 +68,8 @@ public class GetSpeedTestHostsHandler extends Thread {
                     }
                     selfLat = Double.parseDouble(line.split("lat=\"")[1].split(" ")[0].replace("\"", ""));
                     selfLon = Double.parseDouble(line.split("lon=\"")[1].split(" ")[0].replace("\"", ""));
+                    selip = line.split("ip=\"")[1].split(" ")[0].replace("\"", "");
+                    selisp = line.split("isp=\"")[1].split(" ")[0].replace("\"", "");
                     break;
                 }
 

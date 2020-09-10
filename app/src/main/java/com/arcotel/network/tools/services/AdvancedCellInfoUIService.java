@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -91,13 +90,12 @@ public class AdvancedCellInfoUIService extends Service {
                     phoneNetwork = scanCellularActivity.getPhoneNetworType();
                     operatorName = scanCellularActivity.getDevSimOperatorName();
                     //Abre seccion operador
-                    operatorTxtString = "Operador = "+operatorName+"\nMcc: "+scanCellularActivity.getDevMccId()+"Mnc: "+scanCellularActivity.getDevMncId();
+                    operatorTxtString = "Operador: "+operatorName+"\nMcc: "+scanCellularActivity.getDevMccId()+"\nMnc: "+scanCellularActivity.getDevMncId();
                     //Seccion strengthTxtString = "---"; & cellIdTxtString = "---";
                     ArrayList<Integer> strengthInfo = scanCellularActivity.getDevStrengthSignal();
                     ArrayList<Integer> cellIdInfo = scanCellularActivity.getDevCellIdentity();
                     if(phoneNetwork == "HSPA+" || phoneNetwork == "HSPA" || phoneNetwork == "UMTS"){
                         if(strengthInfo.isEmpty() ){
-                            Log.d("ESVACIO","entra aca");
                             signalQuality = "BAD";
                             strengthTxtString = "---";
                         }
@@ -106,7 +104,6 @@ public class AdvancedCellInfoUIService extends Service {
                             strengthTxtString = "RSSI: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
                         }
                         if(cellIdInfo.isEmpty() ){
-                            Log.d("ESVACIO","entra aca");
                             signalQuality = "BAD";
                             cellIdTxtString = "---";
                         }
@@ -116,7 +113,6 @@ public class AdvancedCellInfoUIService extends Service {
                     }
                     else if(phoneNetwork == "LTE"){
                         if(strengthInfo.isEmpty() ){
-                            Log.d("ESVACIO","entra aca");
                             signalQuality = "BAD";
                             strengthTxtString = "---";
                         }
@@ -125,7 +121,6 @@ public class AdvancedCellInfoUIService extends Service {
                             strengthTxtString = "RSRP: "+strengthInfo.get(3)+"dBm\nRSRQ: "+strengthInfo.get(4)+"dB\nTA: "+strengthInfo.get(5);
                         }
                         if(cellIdInfo.isEmpty() ){
-                            Log.d("ESVACIO","entra aca");
                             signalQuality = "BAD";
                             cellIdTxtString = "---";
                         }
@@ -135,7 +130,6 @@ public class AdvancedCellInfoUIService extends Service {
                     }
                     else if(phoneNetwork == "GSM" || phoneNetwork == "GPRS" || phoneNetwork == "EDGE"){
                         if(strengthInfo.isEmpty() ){
-                            Log.d("ESVACIO","entra aca");
                             signalQuality = "BAD";
                             strengthTxtString = "---";
                         }
@@ -144,7 +138,6 @@ public class AdvancedCellInfoUIService extends Service {
                             strengthTxtString = "RSSI: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
                         }
                         if(cellIdInfo.isEmpty() ){
-                            Log.d("ESVACIO","entra aca");
                             signalQuality = "BAD";
                             cellIdTxtString = "---";
                         }
@@ -161,13 +154,9 @@ public class AdvancedCellInfoUIService extends Service {
                         internetTxtString = "---";
                     }
                     else{
-                        ArrayList<String> internetIspIpInfo = scanCellularActivity.getInternetIspIpInfo();
-                        internetTxtString = "ISP: "+internetIspIpInfo.get(0)+"\nIP: "+internetIspIpInfo.get(1);
+                        internetTxtString = scanCellularActivity.getNetworkConectivityType();
                     }
-                    //Seccion Locacion
-                    //Pair<Double,Double> latLonLocation = locationAddress.getLatLongFromLocation();
-                    //locationTxtString = "Latitud: "+latLonLocation.first+"\nLongitude: "+latLonLocation.second;
-                    //locationTxtString = "Latitud: 111111 \nLongitude: 2222222";
+
                 }
                 else{
                     signalQuality = "NONE";

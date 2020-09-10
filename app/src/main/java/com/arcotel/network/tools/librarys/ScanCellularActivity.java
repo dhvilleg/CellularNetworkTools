@@ -22,10 +22,10 @@ import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.arcotel.network.tools.GetSpeedTestHostsHandler;
 import com.arcotel.network.tools.MainActivity;
 import com.arcotel.network.tools.interfaces.DataListener;
 
@@ -46,10 +46,15 @@ public class ScanCellularActivity {
     public static MainActivity UPDATE_LISTENER_RSRP;
     public String phonestate;
 
+    String ispName = "---";
+    String ipAddress = "---";
+
+
     private SignalStrength      signalStrength;
     private TelephonyManager    telephonyManager;
     private final static String LTE_TAG             = "LTE_Tag";
     private final static String LTE_SIGNAL_STRENGTH = "getLteSignalStrength";
+    GetSpeedTestHostsHandler getSpeedTestHostsHandler = null;
 
     //TelephonyManager telephonyManager;
     ConnectivityManager connMgr;
@@ -241,7 +246,7 @@ public class ScanCellularActivity {
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
-                Log.d("en ScanCellularAct","valor señar ruido es "+ snr[0]);
+                //Log.d("en ScanCellularAct","valor señar ruido es "+ snr[0]);
                 dataListener.getDataRssnrRecived(""+snr[0]);
 
             }
@@ -383,14 +388,14 @@ public class ScanCellularActivity {
         networkInfo = connMgr.getActiveNetworkInfo();
         String networkConectivityType ="";
         if(networkInfo == null){
-            Log.d("RED","NULL");
+            //Log.d("RED","NULL");
             networkConectivityType = "NO_CONECTION";
         }
         else if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI){
-            Log.d("RED","wifi");
+            //Log.d("RED","wifi");
             networkConectivityType = "WIFI";
         } else if(networkInfo.getType() == ConnectivityManager.TYPE_MOBILE){
-            Log.d("RED","Mobile");
+            //Log.d("RED","Mobile");
             networkConectivityType = "MOBILE";
         }
 
@@ -398,11 +403,12 @@ public class ScanCellularActivity {
     }
 
     public ArrayList<String> getInternetIspIpInfo(){
-        String ispName = "Movistar";
-        String ipAddress = "192.168.1.1";
+
         ArrayList<String> internetInformationArray = new ArrayList<>();
+
         internetInformationArray.add(ispName);
         internetInformationArray.add(ipAddress);
+
         return internetInformationArray;
     }
 }

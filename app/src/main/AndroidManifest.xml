@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
+            android:name=".services.FetchAddressIntentService"
+            android:exported="false"></service>
+        <service
             android:name=".services.AdvancedCellInfoUIService"
             android:enabled="true"
             android:exported="true" />

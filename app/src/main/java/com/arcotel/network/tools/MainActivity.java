@@ -228,6 +228,9 @@ public class MainActivity extends AppCompatActivity {
         else if(signalQuality == "NONE"){
             imageViewSignalPower.setImageResource(R.drawable.cell_no_signal_status);
         }
+        else{
+            imageViewSignalPower.setImageResource(R.drawable.cell_no_signal_status);
+        }
     }
 
     //Listener del boton arcotel que llama a la activity disclaimer
