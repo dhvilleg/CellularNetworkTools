@@ -1,6 +1,7 @@
 package com.arcotel.network.tools;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.telephony.TelephonyManager;
@@ -46,13 +48,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private final int REQUEST_PERMISSION_PHONE_STATE=1;
+    private static final int    PERMISSIONS_REQUEST = 1234;
     private Dialog rankDialog;
     private RatingBar ratingBar;
     private TelephonyManager telephonyManager;
@@ -84,14 +87,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        shoAlertDialogGetPermissions();
-
-
-
-
 
         this.telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-
         if (android.os.Build.VERSION.SDK_INT > 9)
         {
             StrictMode.ThreadPolicy policy = new
@@ -117,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         ConectivityScanService.setUpdateListener(this);
-        //iniciarConectivityScanService();
+        checkPermissions();
 
         Toast.makeText(MainActivity.this, "OnCreate", Toast.LENGTH_LONG).show();
 
@@ -129,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         final Intent intent = getIntent();
         final double[] snr = new double[1];
-        //iniciarConectivityScanService();
+        //checkPermissions();
 
 
 
@@ -749,74 +746,81 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void shoAlertDialogGetPermissions(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("AlertDialog 2 botones");
-        builder.setMessage("¿Quieres cerrar la app?");
 
-        builder.setPositiveButton("La Roja", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String permissionACLocation =  Manifest.permission.ACCESS_COARSE_LOCATION;
-                String permissionAFLocation = Manifest.permission.ACCESS_FINE_LOCATION;
-                String permissionInternet = Manifest.permission.INTERNET;
-                String permissionAccessWifi = Manifest.permission.ACCESS_WIFI_STATE;
-                String readPhoneState = Manifest.permission.READ_PHONE_STATE;
-                showPhoneStatePermission(permissionACLocation);
-                showPhoneStatePermission(permissionAFLocation);
-                showPhoneStatePermission(permissionInternet);
-                showPhoneStatePermission(permissionAccessWifi);
-                showPhoneStatePermission(readPhoneState);
-            }
-        });
-        builder.setNegativeButton("Cancelar", null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
-    private void showPhoneStatePermission(String permission) {
-        Log.d("Entra showPhoneState","la variable permiso tiene: "+permission);
-        int permissionCheck = ContextCompat.checkSelfPermission(
-                this, permission);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    permission)) {
-                Log.d("Entra showExplanation","la variable permiso tiene: "+permission);
-                showExplanation("Permission Needed", "Rationale", permission, REQUEST_PERMISSION_PHONE_STATE);
-            } else {
-                Log.d("Entra requestpermision","la variable permiso tiene: "+permission);
-                requestPermission(permission, REQUEST_PERMISSION_PHONE_STATE);
-            }
+    public String[] getRequiredPermissions() {
+        String[] permissions = null;
+        try {
+            permissions = getPackageManager().getPackageInfo(getPackageName(),
+                    PackageManager.GET_PERMISSIONS).requestedPermissions;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (permissions == null) {
+            return new String[0];
         } else {
-            Toast.makeText(this, "Permission (already) Granted!", Toast.LENGTH_SHORT).show();
+            return permissions.clone();
         }
     }
+
+    @TargetApi(23)
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION_PHONE_STATE:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
-                }
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST) {
+            checkPermissions();
         }
     }
-    private void showExplanation(String title,String message,final String permission,final int permissionRequestCode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        requestPermission(permission, permissionRequestCode);
+
+    private void checkPermissions() {
+        final String[] ungrantedPermissions = requiredPermissionsStillNeeded();
+        if (ungrantedPermissions.length == 0) {
+            //iniciarConectivityScanService();
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Arcotel Network Tool necesita permisos");
+                builder.setIcon(R.drawable.arcotel_icon);
+                builder.setMessage("¿Permitir a apliacion permisos de ....?");
+
+                builder.setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("AlertDialog","entra a requesPermissions");
+                        requestPermissions(ungrantedPermissions, PERMISSIONS_REQUEST);
+                        Log.d("AlertDialog","sale de requesPermissions");
+
                     }
                 });
-        builder.create().show();
+                builder.setNegativeButton("Denegar", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+
+
+            }
+        }
     }
-    private void requestPermission(String permissionName, int permissionRequestCode) {
-        Log.d("Entra requestPermission","la variable permiso tiene: "+permissionName);
-        ActivityCompat.requestPermissions(this,
-                new String[]{permissionName}, permissionRequestCode);
+
+    @TargetApi(23)
+    private String[] requiredPermissionsStillNeeded() {
+
+        Set<String> permissions = new HashSet<String>();
+        for (String permission : getRequiredPermissions()) {
+            permissions.add(permission);
+        }
+        for (Iterator<String> i = permissions.iterator(); i.hasNext();) {
+            String permission = i.next();
+            if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                Log.d(MainActivity.class.getSimpleName(),
+                        "Permission: " + permission + " already granted.");
+                i.remove();
+            } else {
+                Log.d(MainActivity.class.getSimpleName(),
+                        "Permission: " + permission + " not yet granted.");
+            }
+        }
+        return permissions.toArray(new String[permissions.size()]);
     }
 
 
