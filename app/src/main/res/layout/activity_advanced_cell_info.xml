@@ -9,7 +9,6 @@
     tools:context=".AdvancedCellInfoActivity">
 
 
-
     <ImageView
         android:id="@+id/imageViewACI"
         android:layout_width="22dp"
@@ -19,7 +18,7 @@
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cell_signal_status_green" />
+        app:srcCompat="@drawable/cell_no_signal_status" />
 
     <TextView
         android:id="@+id/textViewTechCellACI"
@@ -29,7 +28,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
-        android:text="LTE"
+        android:text="---"
         app:layout_constraintStart_toEndOf="@+id/imageViewACI"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,7 +40,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="Movistar"
+        android:text="---"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,7 +63,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/borde_redondeado"
         android:singleLine="false"
-        android:text="OPERADOR: Movistar\nMCC: 740\nMNC: 0"
+        android:text="OPERADOR: ---\nMCC: ---\nMNC: ---"
         android:textAppearance="@style/Medium"
         android:textIsSelectable="true"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +77,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/borde_redondeado"
-        android:text="RSRP: -91 dBm\nRSRQ: -13 dB\nRSSNR: 9.6 dB"
+        android:text="RSRP: --- \nRSRQ: --- dB\nTA: ---"
         android:textAppearance="@style/Medium"
         android:textIsSelectable="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +93,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/borde_redondeado"
-        android:text="TAC: 9007\nCID: 7246526\neNB ID: 28306\nPCI: 143"
+        android:text="TAC: ---\nCID: ---\neNB ID: ---\nPCI: ---"
         android:textAppearance="@style/Medium"
         android:textIsSelectable="true"
         app:layout_constraintEnd_toEndOf="parent"

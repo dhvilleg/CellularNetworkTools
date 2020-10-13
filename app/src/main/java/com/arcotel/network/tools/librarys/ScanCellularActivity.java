@@ -36,21 +36,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScanCellularActivity {
-    private static final int TODO = 100;
+
     private static int VERY_BAD=-110;
-    private static int BAD=-100;
-    private static int AVERAGE=-80;
-    private static int GOOD=-75;
-    private static int VERY_GOOD=-70;
-    public static final String LTE_RSSNR = "IDUNICO_001";
-    public static MainActivity UPDATE_LISTENER_RSRP;
-    public String phonestate;
+    private static int BAD=-101;
+    private static int AVERAGE=-81;
+    private static int GOOD=-80;
+    private static int VERY_GOOD=-75;
+
 
     String ispName = "---";
     String ipAddress = "---";
 
-
-    private SignalStrength      signalStrength;
     private TelephonyManager    telephonyManager;
     private final static String LTE_TAG             = "LTE_Tag";
     private final static String LTE_SIGNAL_STRENGTH = "getLteSignalStrength";
@@ -314,7 +310,6 @@ public class ScanCellularActivity {
                 if (cellInfos.get(i).isRegistered()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         if (cellInfos.get(i) instanceof CellInfoWcdma) {
-
                             CellInfoWcdma cellInfoWcdma = (CellInfoWcdma) cellInfos.get(i);
                             CellIdentityWcdma identityWcdma = cellInfoWcdma.getCellIdentity();
                             cellItentity.add(identityWcdma.getLac()); //LAC: GSM Location Area (16-bit)

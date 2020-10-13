@@ -1,9 +1,7 @@
 package com.arcotel.network.tools;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,8 +9,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,10 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import com.arcotel.network.tools.librarys.ScanCellularActivity;
 import com.arcotel.network.tools.services.ConectivityScanService;
 import com.arcotel.network.tools.test.HttpDownloadTest;
 import com.arcotel.network.tools.test.HttpUploadTest;
@@ -55,15 +48,16 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Variables de entorno y componnentes de UI
     private static final int    PERMISSIONS_REQUEST = 1234;
     private Dialog rankDialog;
     private RatingBar ratingBar;
-    private TelephonyManager telephonyManager;
     private Button buttonStartCapture;
     private TextView textViewTechCell;
     private ImageView imageViewSignalPower;
     private TextView textViewInternetCon;
     private TextView textViewOperatorName;
+    private BottomNavigationView bottomNavigationView;
 
     //Variables TestInternet
     private String pingTimeMilis = "null" ;
@@ -81,55 +75,43 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout chartDownload;
     private LinearLayout chartPing;
     private LinearLayout chartUpload;
-    private ScanCellularActivity scanCellularActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT > 9)
-        {
-            StrictMode.ThreadPolicy policy = new
-                    StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
 
-        buttonStartCapture = (Button) findViewById(R.id.buttonStartCapture);
-        textViewTechCell = (TextView) findViewById(R.id.textViewTechCell);
-        imageViewSignalPower = (ImageView) findViewById(R.id.imageViewSignalPower);
-        textViewInternetCon = (TextView) findViewById(R.id.textViewInternetCon);
-        textViewOperatorName = (TextView) findViewById(R.id.textViewOperatorName);
+        buttonStartCapture = findViewById(R.id.buttonStartCapture);
+        textViewTechCell = findViewById(R.id.textViewTechCell);
+        imageViewSignalPower = findViewById(R.id.imageViewSignalPower);
+        textViewInternetCon = findViewById(R.id.textViewInternetCon);
+        textViewOperatorName = findViewById(R.id.textViewOperatorName);
 
         //Instanciar UI de TestInternet
-        pingTextView = (TextView) this.findViewById(R.id.pingTextView);
-        downloadTextView = (TextView) this.findViewById(R.id.downloadTextView);
-        uploadTextView = (TextView) this.findViewById(R.id.uploadTextView);
-        chartDownload = (LinearLayout) this.findViewById(R.id.chartDownload);
-        chartPing = (LinearLayout) this.findViewById(R.id.chartPing);
-        chartUpload = (LinearLayout) this.findViewById(R.id.chartUpload);
+        pingTextView = this.findViewById(R.id.pingTextView);
+        downloadTextView = this.findViewById(R.id.downloadTextView);
+        uploadTextView = this.findViewById(R.id.uploadTextView);
+        chartDownload = this.findViewById(R.id.chartDownload);
+        chartPing = this.findViewById(R.id.chartPing);
+        chartUpload = this.findViewById(R.id.chartUpload);
+        bottomNavigationView = findViewById(R.id.bottom_nav);
 
-        scanCellularActivity = new ScanCellularActivity(getApplicationContext());
-
+        //Instanciar objetos de aplicación
 
         ConectivityScanService.setUpdateListener(this);
-        checkPermissions();
+                checkPermissions();
 
         Toast.makeText(MainActivity.this, "OnCreate", Toast.LENGTH_LONG).show();
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        final Intent intent = getIntent();
-        final double[] snr = new double[1];
-        //checkPermissions();
-
-
-
+        String[] ungrantedPermissions = requiredPermissionsStillNeeded();
+        if (ungrantedPermissions.length == 0) {
+            iniciarConectivityScanService();
+        }
         Toast.makeText(MainActivity.this, "onResume", Toast.LENGTH_LONG).show();
         //Button startButton = (Button) findViewById(R.id.buttonStartCapture);
         buttonStartCapture.setOnClickListener(new View.OnClickListener() {
@@ -137,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 doSpeedTest();
             }
         });
-
-
         onBottonNavigationPress();
     }
 
@@ -195,22 +175,22 @@ public class MainActivity extends AppCompatActivity {
         buttonStartCapture.setEnabled(buttonStartCaptureBool);
 
 
-        if(signalQuality == "VERY_GOOD"){
+        if(signalQuality.equals("VERY_GOOD")){
             imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_green);
         }
-        else if(signalQuality == "GOOD"){
+        else if(signalQuality.equals("GOOD")){
+            imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_green);
+        }
+        else if(signalQuality.equals("AVERAGE")){
             imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_yellow);
         }
-        else if(signalQuality == "AVERAGE"){
+        else if(signalQuality.equals("BAD")){
             imageViewSignalPower.setImageResource(R.drawable.cellsignal_status_orange);
         }
-        else if(signalQuality == "BAD"){
+        else if(signalQuality.equals("VERY_BAD")){
             imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_red);
         }
-        else if(signalQuality == "VERY_BAD"){
-            imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_red);
-        }
-        else if(signalQuality == "NONE"){
+        else if(signalQuality.equals("NONE")){
             imageViewSignalPower.setImageResource(R.drawable.cell_no_signal_status);
         }
         else{
@@ -252,9 +232,9 @@ public class MainActivity extends AppCompatActivity {
         rankDialog = new Dialog(MainActivity.this, R.style.FullHeightDialog);
         rankDialog.setContentView(R.layout.rank_dialog);
         rankDialog.setCancelable(false);
-        ratingBar = (RatingBar)rankDialog.findViewById(R.id.dialog_ratingbar);
+        ratingBar = rankDialog.findViewById(R.id.dialog_ratingbar);
         ratingBar.setRating(userRankValue);
-        Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+        Button updateButton = rankDialog.findViewById(R.id.rank_dialog_button);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
 
     //metodo para invocar el Booton bar que llama a las activities de avanzado, estadísticas y settings
     public void onBottonNavigationPress(){
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -289,27 +269,23 @@ public class MainActivity extends AppCompatActivity {
                         intentSetup.putExtra("key", "value"); //Optional parameters
                         startActivity(intentSetup);
                         break;
+
                 }
                 return false;
             }
         });
     }
 
-
     //Seccion Prueba de velocidad de internet
     private void doSpeedTest(){
         final DecimalFormat dec = new DecimalFormat("#.##");
         buttonStartCapture.setEnabled(false);
         tempBlackList = new HashSet<>();
-
-
-
         //Restart test icin eger baglanti koparsa
         if (getSpeedTestHostsHandler == null) {
             getSpeedTestHostsHandler = new GetSpeedTestHostsHandler();
             getSpeedTestHostsHandler.start();
         }
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -744,11 +720,6 @@ public class MainActivity extends AppCompatActivity {
     /**Sección para asegurar la obtención de permisos requeridos por la aplicación
      * https://stackoverflow.com/questions/53276818/splashscreen-with-runtime-permissions*/
 
-
-    public void shoAlertDialogGetPermissions(){
-
-    }
-
     public String[] getRequiredPermissions() {
         String[] permissions = null;
         try {
@@ -775,29 +746,28 @@ public class MainActivity extends AppCompatActivity {
     private void checkPermissions() {
         final String[] ungrantedPermissions = requiredPermissionsStillNeeded();
         if (ungrantedPermissions.length == 0) {
-            //iniciarConectivityScanService();
+            iniciarConectivityScanService();
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Arcotel Network Tool necesita permisos");
-                builder.setIcon(R.drawable.arcotel_icon);
-                builder.setMessage("¿Permitir a apliacion permisos de ....?");
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.Theme_AppCompat_Dialog_Alert);
+                builder.setTitle("Arcotel Network Tools");
+                builder.setIcon(R.drawable.arcotel_logo);
+                builder.setCancelable(false);
+                builder.setMessage("Para el correcto funcionamiento de la aplicación, se debe aceptar los permisos de: Telefono, Ubicación y Almacenamiento.\n¿Desea continuar?");
                 builder.setPositiveButton("Permitir", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d("AlertDialog","entra a requesPermissions");
                         requestPermissions(ungrantedPermissions, PERMISSIONS_REQUEST);
-                        Log.d("AlertDialog","sale de requesPermissions");
-
                     }
                 });
-                builder.setNegativeButton("Denegar", null);
+                builder.setNegativeButton("Denegar",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
-
-
             }
         }
     }
@@ -805,7 +775,7 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(23)
     private String[] requiredPermissionsStillNeeded() {
 
-        Set<String> permissions = new HashSet<String>();
+        Set<String> permissions = new HashSet<>();
         for (String permission : getRequiredPermissions()) {
             permissions.add(permission);
         }
@@ -822,6 +792,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return permissions.toArray(new String[permissions.size()]);
     }
-
-
 }

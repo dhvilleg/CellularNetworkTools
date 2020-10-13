@@ -12,4 +12,6 @@
         android:id="@+id/main_setup_application"
         android:icon="@drawable/ic_settings"
         android:title="@string/nav_gnss" />
+
+
 </menu>

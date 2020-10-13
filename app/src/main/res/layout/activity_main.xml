@@ -19,7 +19,7 @@
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cell_signal_status_green" />
+        app:srcCompat="@drawable/cell_no_signal_status" />
 
     <TextView
         android:id="@+id/textViewTechCell"
@@ -29,7 +29,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
-        android:text="LTE"
+        android:text="---"
         app:layout_constraintStart_toEndOf="@+id/imageViewSignalPower"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,7 +41,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text="Movistar"
+        android:text="---"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,7 +62,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="Conexion internet"
+        android:text="Conexión a Internet:"
         android:textAppearance="@style/TextoPequeTech"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dividerHeaderInterCon" />
@@ -74,7 +74,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:text=" Wifi"
+        android:text="---"
         android:textAppearance="@style/TextoPequeTech"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dividerHeaderInterCon" />

@@ -18,9 +18,10 @@
         android:roundIcon="@drawable/arcotel_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <service
             android:name=".services.FetchAddressIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".services.AdvancedCellInfoUIService"
             android:enabled="true"
