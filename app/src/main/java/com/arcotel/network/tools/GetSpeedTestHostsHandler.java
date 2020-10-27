@@ -31,19 +31,15 @@ public class GetSpeedTestHostsHandler extends Thread {
     public double getSelfLat() {
         return selfLat;
     }
-
     public double getSelfLon() {
         return selfLon;
     }
-
     public String getSelfLip() {
         return selip;
     }
     public String getSelfLisp() {
         return selisp;
     }
-
-
     public boolean isFinished() {
         return finished;
     }

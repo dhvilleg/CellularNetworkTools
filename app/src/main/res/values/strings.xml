@@ -86,10 +86,10 @@
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    <string name="attachment_title">Preferencias de carga: Wifi/Móvil</string>
+    <string name="attachment_summary_on">La información colectada se subirá usando la red Móvil
     </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="attachment_summary_off">La información colectada se subirá usando la red Wifi</string>
     <string name="title_activity_show_arcotel_disclaimer">ShowArcotelDisclaimerActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

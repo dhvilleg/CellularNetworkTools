@@ -41,7 +41,6 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
 
     private String aux = "none";
 
-
     GetSpeedTestHostsHandler getSpeedTestHostsHandler = null;
 
     private final static int SINGLE_LOCATION = 1010;
@@ -50,9 +49,6 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
     private LocationManager manager = null;
     private LocationListener locationListener;
     private AddressResultReceiver mResultReceiver;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,34 +123,20 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
 
     }*/
 
-    /**
-     * Inicia el servicio
-     */
-
+    /**Inicia el servicio*/
     private void iniciarCellularCoverageService() {
         Intent service = new Intent(this, AdvancedCellInfoUIService.class);
         startService(service);
     }
 
 
-
-    /**
-     * Finaliza el servicio
-     */
-
+    /** Finaliza el servicio  */
     private void pararCellularCoverageService() {
         Intent service = new Intent(this, AdvancedCellInfoUIService.class);
         stopService(service);
     }
 
-
-
-    /**
-     * Actualiza en la interfaz de usuario los valores de potencia de señal
-     *
-     *
-     */
-
+    /**Actualiza en la interfaz de usuario los valores de potencia de señal */
     public void actualizaUIOnAdvancedInfoActivity(String signalQuality,String phoneNetwork,String operatorName,String operatorTxtString,String strengthTxtString,String cellIdTxtString,String internetTxtString) {
         textViewTechCellACI.setText(phoneNetwork);
         textViewOperatorInfo.setText(operatorTxtString);
@@ -218,10 +200,6 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
             textViewInternetInfo.setText("---");
             aux = "none";
         }
-
-
-
-
     }
 
     //@Override
@@ -229,15 +207,12 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
         Log.d("actualizaLocationUI","entra");
         textViewLocationInfo.setText(locationTxtString);
     }
-
     public void stopLocationService(){
         if (locationListener != null)
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
                 manager.removeUpdates(locationListener);
             }
     }
-
-
     /**
      * Method to display the location on UI.
      */
@@ -334,8 +309,6 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
             }
         }
     }
-
-
     private void startIntentService(double lat,double lon) {
 
         Location location = new Location("");
@@ -355,9 +328,6 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
         // service kills itself automatically once all intents are processed.
         startService(intent);
     }
-
-
-
     private class AddressResultReceiver extends ResultReceiver {
         AddressResultReceiver(Handler handler) {
             super(handler);

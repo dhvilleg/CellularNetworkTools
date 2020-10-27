@@ -24,76 +24,79 @@ public class AntDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d("AntDbHelper","entra en clase, crea tabla principal");
         db.execSQL("CREATE TABLE " + ScanContract.ScanEntry.TABLE_NAME + " ("
                 + ScanContract.ScanEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + ScanContract.ScanEntry.TIMESTAMP + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.DEVICEUUID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.RATINGCOUNTER + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.SIMNUMBERID + "INTEGER NOT NULL,"
-                + ScanContract.ScanEntry.COUNTRYISO + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONEOPERATORID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.SIMOPERATORID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.OPERATORMCC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.OPERATORMNC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.DEVMANUFACTURER + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.DEVMODEL + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.ISCONECTED + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONENETSTANDARD + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONENETTECHNOLOGY + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.INTERNETCONNETWORK + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.LATITUDE + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.LONGITUDE + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PINGTIMEMILIS + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.DOWNLOADSPEED + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.UPLOADSPEED + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.IPPUBLICADDR + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.INTERNETISP + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONESIGNALSTRENGTH + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONEASUSTRENGTH + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONESIGNALLEVEL + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.SIGNALQUALITY + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.FIELDISREGISTERED + "INTEGER NOT NULL,"
-                + ScanContract.ScanEntry.PHONERSRPSTRENGTH + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONERSSNRSTRENGTH + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONETIMINGADVANCE + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONECQISTRENGTH + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.PHONERSRQSTRENGTH + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLLTEPCI + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLLTECID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLLTETAC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLLTEENODEB + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLLTEEARFCN + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLBSLAT + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLBSLON + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLSID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLNID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLBID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLWCDMALAC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLWCDMAUCID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLWCDMAUARFCN + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLWCDMAPSC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLWCDMACID + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLWCDMARNC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLGSMARCFN + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLGSMLAC + "TEXT NOT NULL,"
-                + ScanContract.ScanEntry.CELLGSMCID + "TEXT NOT NULL,"
+                + ScanContract.ScanEntry.TIMESTAMP + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.DEVICEUUID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.RATINGCOUNTER + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.SIMNUMBERID + " INTEGER NOT NULL,"
+                + ScanContract.ScanEntry.COUNTRYISO + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONEOPERATORID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.SIMOPERATORID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.OPERATORMCC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.OPERATORMNC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.DEVMANUFACTURER + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.DEVMODEL + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.ISCONECTED + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONENETSTANDARD + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONENETTECHNOLOGY + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.INTERNETCONNETWORK + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.LATITUDE + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.LONGITUDE + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PINGTIMEMILIS + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.DOWNLOADSPEED + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.UPLOADSPEED + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.IPPUBLICADDR + " EXT NOT NULL,"
+                + ScanContract.ScanEntry.INTERNETISP + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONESIGNALSTRENGTH + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONEASUSTRENGTH + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONESIGNALLEVEL + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.SIGNALQUALITY + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.FIELDISREGISTERED + " INTEGER NOT NULL,"
+                + ScanContract.ScanEntry.PHONERSRPSTRENGTH + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONERSSNRSTRENGTH + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONETIMINGADVANCE + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONECQISTRENGTH + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.PHONERSRQSTRENGTH + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLLTEPCI + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLLTECID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLLTETAC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLLTEENODEB + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLLTEEARFCN + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLBSLAT + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLBSLON + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLSID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLNID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLBID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLWCDMALAC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLWCDMAUCID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLWCDMAUARFCN + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLWCDMAPSC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLWCDMACID + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLWCDMARNC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLGSMARCFN + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLGSMLAC + " TEXT NOT NULL,"
+                + ScanContract.ScanEntry.CELLGSMCID + " TEXT NOT NULL,"
                 + "UNIQUE (" + ScanContract.ScanEntry._ID + "))");
 
+        Log.d("AntDbHelper","entra en clase, crea tabla device UUID");
         db.execSQL("CREATE TABLE " + ScanContract.DeviceContract.TABLE_NAME + " ("
-                + ScanContract.DeviceContract.DEVICEUUID + "TEXT NOT NULL,"
-                + ScanContract.DeviceContract.DEVICEMODEL + "TEXT NOT NULL,"
-                + ScanContract.DeviceContract.DEVICEOS + "TEXT NOT NULL,"
-                + ScanContract.DeviceContract.OSVERSION + "TEXT NOT NULL,"
-                + ScanContract.DeviceContract.ISDUALSIM + "INTEGER NOT NULL,"
-                + ScanContract.DeviceContract.FIELDISREGISTERED + "INTEGER NOT NULL,"
+                + ScanContract.DeviceContract.DEVICEUUID + " TEXT NOT NULL,"
+                + ScanContract.DeviceContract.DEVICEMODEL + " TEXT NOT NULL,"
+                + ScanContract.DeviceContract.DEVICEOS + " TEXT NOT NULL,"
+                + ScanContract.DeviceContract.OSVERSION + " TEXT NOT NULL,"
+                + ScanContract.DeviceContract.ISDUALSIM + " INTEGER NOT NULL,"
+                + ScanContract.DeviceContract.FIELDISREGISTERED + " INTEGER NOT NULL,"
                 + "UNIQUE (" + ScanContract.DeviceContract.DEVICEUUID + "))");
 
+        Log.d("AntDbHelper","entra en clase, crea tabla errorcode");
         db.execSQL("CREATE TABLE " + ScanContract.ErrorCodesContract.TABLE_NAME + " ("
                 + ScanContract.ErrorCodesContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + ScanContract.ErrorCodesContract.DEVICEUUID + "TEXT NOT NULL,"
-                + ScanContract.ErrorCodesContract.ERRORCODEIDENTIFIER + "TEXT NOT NULL,"
-                + ScanContract.ErrorCodesContract.ERRORCODEDETAIL + "TEXT NOT NULL,"
-                + ScanContract.ErrorCodesContract.FIELDISREGISTERED + "INTEGER NOT NULL,"
+                + ScanContract.ErrorCodesContract.DEVICEUUID + " TEXT NOT NULL,"
+                + ScanContract.ErrorCodesContract.ERRORCODEIDENTIFIER + " TEXT NOT NULL,"
+                + ScanContract.ErrorCodesContract.ERRORCODEDETAIL + " TEXT NOT NULL,"
+                + ScanContract.ErrorCodesContract.FIELDISREGISTERED + " INTEGER NOT NULL,"
                 + "UNIQUE (" + ScanContract.ErrorCodesContract._ID + "))");
     }
 
@@ -193,6 +196,15 @@ public class AntDbHelper extends SQLiteOpenHelper {
                         null);
     }
 
+    /**Consulta UUID de la tabla DeviceInfo**/
+    public String getDeviceUUID(Cursor getDeviceUUID){
+        String deviceUUID="valorEnCero";
+        while(getDeviceUUID.moveToNext()){
+            deviceUUID = getDeviceUUID.getString(getDeviceUUID.getColumnIndex(ScanContract.DeviceContract.DEVICEUUID));
+        }
+        return deviceUUID;
+    }
+
     /**Sección para crear formato JSON**/
     public ArrayList<String> getCellularInfoInJson(Cursor getCellularInfoByIsRegistered){
         ArrayList<String> jsonQueryFormat = new ArrayList<String>();
@@ -251,7 +263,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
             String cellGsmLac = getCellularInfoByIsRegistered.getString(getCellularInfoByIsRegistered.getColumnIndex(ScanContract.ScanEntry.CELLGSMLAC));
             String cellGsmCid = getCellularInfoByIsRegistered.getString(getCellularInfoByIsRegistered.getColumnIndex(ScanContract.ScanEntry.CELLGSMCID));
             if (Integer.parseInt(fieldIsRegistered) == 0 ){
-                jsonQueryFormat.add("\"timestamp\":\""+timestamp+"\"," +
+                jsonQueryFormat.add("{\"timestamp\":\""+timestamp+"\"," +
                         "\"deviceUUID\":\""+deviceUUID+"\"," +
                         "\"simNumberID\":\""+simNumberID+"\"," +
                         "\"ratingCounter\":\""+ratingCounter+"\"," +
@@ -309,6 +321,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
     }
     public ArrayList<String> getDeviceInfoInJson(Cursor getDeviceInfoByIsRegistered){
         ArrayList<String> jsonQueryFormat = new ArrayList<String>();
+
         int counter = 0;
         while(getDeviceInfoByIsRegistered.moveToNext()){
             String deviceUUID = getDeviceInfoByIsRegistered.getString(getDeviceInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.DEVICEUUID));
@@ -318,7 +331,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
             String isDualSim = getDeviceInfoByIsRegistered.getString(getDeviceInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.ISDUALSIM));
             String fieldIsRegistered = getDeviceInfoByIsRegistered.getString(getDeviceInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.FIELDISREGISTERED));
             if (Integer.parseInt(fieldIsRegistered) == 0 ){
-                jsonQueryFormat.add("\"deviceUUID\":\""+deviceUUID+"\"," +
+                jsonQueryFormat.add("{\"deviceUUID\":\""+deviceUUID+"\"," +
                         "\"deviceModel\":\""+deviceModel+"\"," +
                         "\"deviceOS\":\""+deviceOS+"\"," +
                         "\"osVersion\":\""+osVersion+"\"," +
@@ -333,27 +346,24 @@ public class AntDbHelper extends SQLiteOpenHelper {
         ArrayList<String> jsonQueryFormat = new ArrayList<String>();
         int counter = 0;
         while(getErrorCodesInfoByIsRegistered.moveToNext()){
-            String scan_id = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.ScanEntry._ID));
-            String deviceUUID = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.DEVICEUUID));
-            String deviceModel = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.DEVICEMODEL));
-            String deviceOS = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.DEVICEOS));
-            String osVersion = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.OSVERSION));
-            String isDualSim = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.ISDUALSIM));
-            String fieldIsRegistered = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.DeviceContract.FIELDISREGISTERED));
+            String scan_id = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.ErrorCodesContract._ID));
+            String deviceUUID = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.ErrorCodesContract.DEVICEUUID));
+            String errorCodeIdentifier = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.ErrorCodesContract.ERRORCODEIDENTIFIER));
+            String errorCodeDetail = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.ErrorCodesContract.ERRORCODEDETAIL));
+            String fieldIsRegistered = getErrorCodesInfoByIsRegistered.getString(getErrorCodesInfoByIsRegistered.getColumnIndex(ScanContract.ErrorCodesContract.FIELDISREGISTERED));
+
             if (Integer.parseInt(fieldIsRegistered) == 0 ){
-                jsonQueryFormat.add("\"deviceUUID\":\""+deviceUUID+"\"," +
-                        "\"deviceModel\":\""+deviceModel+"\"," +
-                        "\"deviceOS\":\""+deviceOS+"\"," +
-                        "\"osVersion\":\""+osVersion+"\"," +
-                        "\"isDualSim\":\""+isDualSim+"\"," +
-                        "\"fieldIsRegistered\":\""+fieldIsRegistered+"\"};"+deviceUUID);
+                jsonQueryFormat.add("{\"deviceUUID\":\""+deviceUUID+"\"," +
+                        "\"errorCodeIdentifier\":\""+errorCodeIdentifier+"\"," +
+                        "\"errorCodeDetail\":\""+errorCodeDetail+"\"," +
+                        "\"fieldIsRegistered\":\""+fieldIsRegistered+"\"};"+scan_id);
                 counter = counter+1;
             }
         }
         return jsonQueryFormat;
     }
 
-    /**Sección para crear actualizar campos que no se hayan registrado en el backend**/
+    /**Sección para actualizar campos que no se hayan registrado en el backend**/
     public void updateCellularIsRegisteredById(String scanId) {
         ContentValues cv = new ContentValues();
         cv.put(ScanContract.ScanEntry.FIELDISREGISTERED,"1");

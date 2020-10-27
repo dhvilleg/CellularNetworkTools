@@ -18,6 +18,9 @@
         android:roundIcon="@drawable/arcotel_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
 
         <service
             android:name=".services.FetchAddressIntentService"

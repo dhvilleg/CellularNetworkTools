@@ -21,13 +21,14 @@ import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
 import com.arcotel.network.tools.GetSpeedTestHostsHandler;
-import com.arcotel.network.tools.MainActivity;
-import com.arcotel.network.tools.interfaces.DataListener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
@@ -56,6 +57,8 @@ public class ScanCellularActivity {
     ConnectivityManager connMgr;
     Context context;
     NetworkInfo networkInfo;
+
+    private double snr = 0.1;
 
     public ScanCellularActivity(Context context) {
         this.context = context;
@@ -166,6 +169,7 @@ public class ScanCellularActivity {
             return !address.equals("");
         } catch (UnknownHostException e) {
             // Log error
+
         }
         return false;
     }
@@ -176,18 +180,22 @@ public class ScanCellularActivity {
     }
 
     public String getDevOperatorName() {
-        String operatorName = telephonyManager.getNetworkOperatorName();
+        String operatorName = telephonyManager.getSimOperatorName();
         return operatorName;
 
     }
 
-    public ArrayList<String> getOperatorInfo() {
+    public ArrayList<String> getPhoneServiceInfo() {
         ArrayList<String> operatorInfo = new ArrayList<String>();
         operatorInfo.add(telephonyManager.getNetworkCountryIso());
-        operatorInfo.add(telephonyManager.getNetworkOperator());
         operatorInfo.add(telephonyManager.getNetworkOperatorName());
         operatorInfo.add(telephonyManager.getSimOperatorName());
-        operatorInfo.add(telephonyManager.getSimOperator());
+        operatorInfo.add(getDevMccId());
+        operatorInfo.add(getDevMncId());
+        operatorInfo.add(""+getDevIsConected());
+        operatorInfo.add(getPhoneSignalType());
+        operatorInfo.add(getPhoneNetworType());
+        operatorInfo.add(getNetworkConectivityType());
         return operatorInfo;
     }
 
@@ -225,16 +233,14 @@ public class ScanCellularActivity {
         return phonestateString;
     }
 
-    public void getLteRssnr(final DataListener dataListener){
-
-        final double[] snr = new double[1];
-
+    public void getLteRssnr(){
 
         telephonyManager.listen(new PhoneStateListener(){
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             public void onSignalStrengthsChanged(SignalStrength signalStrength)
             {
                 try {
-                    snr[0] = (double) ((Integer) SignalStrength.class.getMethod("getLteRssnr").invoke(signalStrength)/10D);
+                    snr = (double) ((Integer) CellSignalStrengthLte.class.getMethod("getLteRssnr").invoke(signalStrength)/10D);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
@@ -242,8 +248,7 @@ public class ScanCellularActivity {
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
-                //Log.d("en ScanCellularAct","valor señar ruido es "+ snr[0]);
-                dataListener.getDataRssnrRecived(""+snr[0]);
+                Log.d("en ScanCellularAct","valor señar ruido es "+ snr );
 
             }
         }, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
@@ -284,8 +289,21 @@ public class ScanCellularActivity {
                                 strength.add(cellSignalStrengthLte.getRsrp()); //RSRP: Reference Signal Received Power
                                 strength.add(cellSignalStrengthLte.getRsrq()); //RSRQ: Reference Signal Received Quality
                                 //strength.add(getLteRssnr(telephonyManager));
-                                strength.add(cellSignalStrengthLte.getTimingAdvance()); //TA: Timing Advance
-                                strength.add(cellSignalStrengthLte.getCqi());// CQI: Channel Quality Indicator
+                                int ta = cellSignalStrengthLte.getTimingAdvance();
+                                if (ta == 2147483647){
+                                    strength.add(0); //TA: Timing Advance
+                                }
+                                else{
+                                    strength.add(ta); //TA: Timing Advance
+                                }
+                                int cqi = cellSignalStrengthLte.getCqi();
+                                if (cqi == 2147483647){
+                                    strength.add(0);// CQI: Channel Quality Indicator
+                                }
+                                else{
+                                    strength.add(cqi);// CQI: Channel Quality Indicator
+                                }
+
                             }
                         } else if (cellInfos.get(i) instanceof CellInfoCdma) {
                             CellInfoCdma cellInfoCdma = (CellInfoCdma) cellInfos.get(i);
@@ -333,15 +351,13 @@ public class ScanCellularActivity {
                             CellInfoLte cellInfoLte = (CellInfoLte) cellInfos.get(i);
                             CellIdentityLte identityLte = cellInfoLte.getCellIdentity();
                             cellItentity.add(identityLte.getPci()); //PCI: Physical Cell ID (0-503)
-                            cellItentity.add(identityLte.getTac()); //TAC: Tracking Area Code (16-bit)
-                            cellItentity.add(identityLte.getCi() >> 8); //eNB: eNodeB Identifier (20-bit)
-                            //cellItentity.add(identityLte.getCi());
                             hexPivote = Integer.toHexString(identityLte.getCi());
                             String [] cadena = hexPivote.split("");
                             hexPivote = cadena[cadena.length-2]+cadena[cadena.length -1];
                             int lteCid=Integer.parseInt(hexPivote,16);
-                            cellItentity.add(lteCid);
-
+                            cellItentity.add(lteCid);//cellLteCid
+                            cellItentity.add(identityLte.getTac()); //TAC: Tracking Area Code (16-bit)
+                            cellItentity.add(identityLte.getCi() >> 8); //eNB: eNodeB Identifier (20-bit)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 cellItentity.add(identityLte.getEarfcn()); //EARFCN: E-UTRA Absolute Radio Frequency Channel Number (0-65535)
                             }
@@ -405,5 +421,21 @@ public class ScanCellularActivity {
         internetInformationArray.add(ipAddress);
 
         return internetInformationArray;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    public boolean isSimAvailable(){
+        SubscriptionManager sManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+        @SuppressLint("MissingPermission") SubscriptionInfo infoSim1 = sManager.getActiveSubscriptionInfoForSimSlotIndex(0);
+        @SuppressLint("MissingPermission") SubscriptionInfo infoSim2 = sManager.getActiveSubscriptionInfoForSimSlotIndex(1);
+        if(infoSim1 != null && infoSim2 != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public String exportRssnr(){
+        getLteRssnr();
+        return ""+snr;
     }
 }
