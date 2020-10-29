@@ -48,6 +48,15 @@ import com.arcotel.network.tools.services.FetchAddressIntentService;
 import com.arcotel.network.tools.test.HttpDownloadTest;
 import com.arcotel.network.tools.test.HttpUploadTest;
 import com.arcotel.network.tools.test.PingTest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.achartengine.ChartFactory;
@@ -72,7 +81,7 @@ import java.util.UUID;
 import static com.arcotel.network.tools.utils.UtilityMethods.buildAlertMessageNoGps;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     //Variables de entorno y componnentes de UI
     private static final int    PERMISSIONS_REQUEST = 1234;
@@ -96,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
     private String ipPublicAddr = "NULL";
     private String internetISP = "NULL";
     private String aux = "none";
+    GoogleMap mGoogleMap;
+    MapView mMapView;
+
 
 
     //Variables TestInternet
@@ -120,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
     private AddressResultReceiver mResultReceiver;
     private LocationManager manager = null;
     private LocationListener locationListener;
-    private String latitud = "";
-    private String longitud = "";
+    private String latitud = "0.0";
+    private String longitud = "0.0";
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
     @Override
@@ -145,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
         chartUpload = this.findViewById(R.id.chartUpload);
         bottomNavigationView = findViewById(R.id.bottom_nav);
 
+
+
         //Instanciar objetos para locación
         mResultReceiver = new AddressResultReceiver(new Handler());
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -155,6 +169,10 @@ public class MainActivity extends AppCompatActivity {
         //Instanciar objetos de aplicación
         ConectivityScanService.setUpdateListener(this);
         checkPermissions();
+
+        debugCellularFields();
+
+
 
 
         //Toast.makeText(MainActivity.this, "OnCreate", Toast.LENGTH_LONG).show();
@@ -173,6 +191,11 @@ public class MainActivity extends AppCompatActivity {
             iniciarConectivityScanService();
             displayLocation(SINGLE_LOCATION);
             signalStrengthListener();
+            onBottonNavigationPress();
+            getGlobalSettings();
+            //Instanciar Mapa
+            instanceMap();
+
         }
         buttonStartCapture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -183,7 +206,15 @@ public class MainActivity extends AppCompatActivity {
                 //Preparado
                 else if(internetConStatusFlag == 2){
                     saveAllInfoToDataBase();
+                    Thread git = new Thread(){
+                        @Override
+                        public void run() {
+                            uploadCellDbInfoToApiRest(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
+                        }
+                    };git.start();
+
                     cursorQuery = scanDbHelper.getCellularInfoByIsRegistered(0);
+
                     ArrayList<String> quryCellularInfo= scanDbHelper.getCellularInfoInJson(cursorQuery);
                     for (int i = 0; i < quryCellularInfo.size();i++){
                         Log.d("ImprimeJson: ",""+quryCellularInfo.get(i));
@@ -196,8 +227,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        onBottonNavigationPress();
-        getGlobalSettings();
+
         Toast.makeText(this, switchSyncPref.toString(),Toast.LENGTH_SHORT).show();
     }
 
@@ -973,6 +1003,7 @@ public class MainActivity extends AppCompatActivity {
         // service kills itself automatically once all intents are processed.
         startService(intent);
     }
+
     private class AddressResultReceiver extends ResultReceiver {
         AddressResultReceiver(Handler handler) {
             super(handler);
@@ -1097,13 +1128,19 @@ public class MainActivity extends AppCompatActivity {
         String phoneNetStandard = getAllInfo.get(6);
         String phoneNetTechnology = getAllInfo.get(7);
         String internetConNetwork = getAllInfo.get(8);
-        //latitud
-        //longitud
+        if (latitud.equals(null) && longitud.equals(null)){
+            latitud = "0.0";
+            longitud = "0.0";
+        }
         //pingTimeMilis
         //downloadSpeed
         //uploadSpeed
         //ipPublicAddr
         //internetISP
+        if (ipPublicAddr.equals("") && internetISP.equals("")){
+            ipPublicAddr = "NULL";
+            internetISP = "NULL";
+        }
         String phoneSignalStrength = getAllInfo.get(9);
         String phoneAsuStrength = getAllInfo.get(10);
         String phoneSignalLevel = getAllInfo.get(11);
@@ -1146,5 +1183,150 @@ public class MainActivity extends AppCompatActivity {
                 cellLteEarfcn,cellBslat,cellBslon,cellSid,cellNid,cellBid,cellWcdmaLac,cellWcdmaUcid,cellWcdmaUarfcn,cellWcdmaPsc,cellWcdmaCid,cellWcdmaRnc,
                 cellGsmArcfn,cellGsmLac,cellGsmCid);
         scanDbHelper.saveCellularSqlScan(scanMetadata);
+    }
+
+    /**Sección creada para dibujar el mapa*/
+    public void instanceMap(){
+        mMapView = (MapView) findViewById(R.id.mapView3);
+        if (mMapView != null){
+            mMapView.onCreate(null);
+            mMapView.onResume();
+            mMapView.getMapAsync(this);
+        }
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(getApplicationContext());
+        mGoogleMap = googleMap;
+        cursorQuery = scanDbHelper.getAllCellularInfo();
+        ArrayList<String> drawMapData = scanDbHelper.getMapQuery(cursorQuery);
+        double latitude = Constants.LATITUDE_DEFAULT;
+        double longitudeMDouble = Constants.LONGITUDE_DEFAULT;
+        try{
+            if(drawMapData.size() != 0){
+                String[] latlon = drawMapData.get(drawMapData.size()-1).split(";");
+                if(latlon[4].equals("0.0") && latlon[5].equals("0.0")){
+                    googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title("Sin Datos").snippet("ultima ubicación desconocida, tome otra captura para  dibjar mapa")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.arcotel_logo_s)));
+                    CameraPosition miLocation = CameraPosition.builder().target(new LatLng(latitude,longitudeMDouble)).zoom(5).bearing(0).tilt(45).build();
+                    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(miLocation));
+                }
+                else{
+                    CameraPosition miLocation = CameraPosition.builder().target(new LatLng(Double.parseDouble(latlon[4]),Double.parseDouble(latlon[5]))).zoom(12).bearing(0).tilt(45).build();
+                    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(miLocation));
+                }
+                for(int i = 0 ; i < drawMapData.size(); i++){
+                    String[] parts = drawMapData.get(i).split(";");
+                    Log.d("onMapReady","Entra a queryMapFormat en onMapReady valor de i es "+i);
+                    String operatorName = parts[0];
+                    String phoneNetworType = parts[1];
+                    int phoneSignalStrength = Integer.parseInt(parts[2]);
+                    String timestamp = parts[3];
+                    latitude = Double.parseDouble(parts[4]);
+                    String signalQuality = parts[6];
+                    longitudeMDouble = Double.parseDouble(parts[5]);
+                    if(latitude != 0.0 && longitudeMDouble != 0.0){
+                        Log.d("OnMapReadyVista","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble+" signalQuality: "+signalQuality);
+                        if(signalQuality.equals("VERY_GOOD")){
+                            Log.d("OnMapReady VERY_GOOD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_green_s)));
+                        }
+                        else if(signalQuality.equals("GOOD")){
+                            Log.d("OnMapReady GOOD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_yellow_s)));
+                        }
+                        else if(signalQuality.equals("AVERAGE")){
+                            Log.d("OnMapReady AVERAGE","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_orange_s)));
+                        }
+                        else if(signalQuality.equals("BAD")){
+                            Log.d("OnMapReady BAD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_red_s)));
+                        }
+                        else if(signalQuality.equals("VERY_BAD")){
+                            Log.d("OnMapReady BAD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_gray_s)));
+                        }
+                    }
+                }
+            }
+            else{
+                googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title("Sin Datos").snippet("Capture para que aparezcan datos en el mapa")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.arcotel_logo_s)));
+                CameraPosition miLocation = CameraPosition.builder().target(new LatLng(latitude,longitudeMDouble)).zoom(6).bearing(0).tilt(45).build();
+                googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(miLocation));
+            }
+        }catch (NumberFormatException  e){
+            e.printStackTrace();
+        }
+    }
+
+    /**Método para depurar campos de la tabla principal*/
+    public void debugCellularFields(){
+        ArrayList<Integer> arrayId;
+        int count = 0;
+        arrayId = scanDbHelper.getIdCellularRegisteredFields(scanDbHelper.getCellularInfoByIsRegistered(Constants.REGISTERED_ON));
+        if ( arrayId.size() > Constants.NUMBER_FOR_DELETE_FIELDS_IN_MAP ){
+            for (int i = 0 ; i < arrayId.size() ; i++ ){
+                if (count < Constants.NUMBER_FOR_DELETE_FIELDS_IN_MAP){
+                    scanDbHelper.deleteCellularFieldsById(""+arrayId.get(i));
+                }
+                else{
+                    i = arrayId.size();
+                }
+                count = count+1;
+            }
+        }
+    }
+    /**1) carga información colectada al API-REST
+     * 2) actualiza el campo registeredfield en 1 en la base de datos
+     * */
+    public void uploadCellDbInfoToApiRest(final String url, final String instanceOf){
+
+        Thread runOutUI = new Thread(){
+            @Override
+            public void run() {
+                ArrayList<String> jsonInputString = new ArrayList<String>();
+
+                if (instanceOf.equals(Constants.INSTANCE_OF_CELLULAR)) {
+                    jsonInputString = scanDbHelper.getCellularInfoInJson(scanDbHelper.getCellularInfoByIsRegistered(Constants.REGISTERED_OFF));
+                }
+                if (instanceOf.equals(Constants.INSTANCE_OF_DEVICE)) {
+                    jsonInputString = scanDbHelper.getDeviceInfoInJson(scanDbHelper.getDeviceInfoByIsRegistered(Constants.REGISTERED_OFF));
+                }
+                if (instanceOf.equals(Constants.INSTANCE_OF_ERROR)) {
+                    jsonInputString = scanDbHelper.getErrorCodesInfoInJson(scanDbHelper.getErrorCodeInfoByIsRegistered(Constants.REGISTERED_OFF));
+                }
+                if (jsonInputString.size() != 0) {
+                    for (int i = 0; i < jsonInputString.size(); i++) {
+                        Log.d("URL_JSON", "LTEvalor de i es " + i);
+
+                        HttpJsonPost jsonPost = new HttpJsonPost();
+                        String[] jsonAndId = jsonInputString.get(i).split(";");
+                        Log.d("URL_JSON", "Crea y envia jsonInputString " + jsonAndId[0]);
+                        String response = jsonPost.postJsonToServer(url, jsonAndId[0]);
+                        if (response.equals("200")) {
+                            if (instanceOf.equals(Constants.INSTANCE_OF_CELLULAR)) {
+                                scanDbHelper.updateCellularIsRegisteredById(jsonAndId[1]);}
+                            if (instanceOf.equals(Constants.INSTANCE_OF_DEVICE)) {
+                                    scanDbHelper.updateDeviceIsRegisteredById(jsonAndId[1]);}
+                            if (instanceOf.equals(Constants.INSTANCE_OF_ERROR)) {
+                                        scanDbHelper.updateErrorCodesIsRegisteredById(jsonAndId[1]);}
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d("ValorMensaje", "mensaje es " + response + " valor ID es: " + jsonAndId[1]);
+                        }
+                    }
+                }
+            }
+        };runOutUI.start();
     }
 }

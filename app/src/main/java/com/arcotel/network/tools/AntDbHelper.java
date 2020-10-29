@@ -205,7 +205,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
         return deviceUUID;
     }
 
-    /**Sección para crear formato JSON**/
+    /**Sección para crear formato JSON de la tabla principal**/
     public ArrayList<String> getCellularInfoInJson(Cursor getCellularInfoByIsRegistered){
         ArrayList<String> jsonQueryFormat = new ArrayList<String>();
         int counter = 0;
@@ -265,8 +265,8 @@ public class AntDbHelper extends SQLiteOpenHelper {
             if (Integer.parseInt(fieldIsRegistered) == 0 ){
                 jsonQueryFormat.add("{\"timestamp\":\""+timestamp+"\"," +
                         "\"deviceUUID\":\""+deviceUUID+"\"," +
-                        "\"simNumberID\":\""+simNumberID+"\"," +
                         "\"ratingCounter\":\""+ratingCounter+"\"," +
+                        "\"simNumberID\":\""+simNumberID+"\"," +
                         "\"countryISO\":\""+countryISO+"\"," +
                         "\"phoneOperatorId\":\""+phoneOperatorId+"\"," +
                         "\"simOperatorId\":\""+simOperatorId+"\"," +
@@ -319,6 +319,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
         }
         return jsonQueryFormat;
     }
+    /**Sección para crear formato JSON de la tabla device**/
     public ArrayList<String> getDeviceInfoInJson(Cursor getDeviceInfoByIsRegistered){
         ArrayList<String> jsonQueryFormat = new ArrayList<String>();
 
@@ -342,6 +343,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
         }
         return jsonQueryFormat;
     }
+    /**Sección para crear formato JSON de la tabla de errores**/
     public ArrayList<String> getErrorCodesInfoInJson(Cursor getErrorCodesInfoByIsRegistered){
         ArrayList<String> jsonQueryFormat = new ArrayList<String>();
         int counter = 0;
@@ -363,7 +365,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
         return jsonQueryFormat;
     }
 
-    /**Sección para actualizar campos que no se hayan registrado en el backend**/
+    /**Sección para actualizar campos que no se hayan registrado en el backend para la tabla principal**/
     public void updateCellularIsRegisteredById(String scanId) {
         ContentValues cv = new ContentValues();
         cv.put(ScanContract.ScanEntry.FIELDISREGISTERED,"1");
@@ -371,6 +373,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
                 cv,ScanContract.ScanEntry._ID + " LIKE ?",new String[]{scanId});
         Log.d("updateIsRegisteredByID","el valor de la consulta es "+c);
     }
+    /**Sección para actualizar campos que no se hayan registrado en el backend para la tabla device**/
     public void updateDeviceIsRegisteredById(String scanId) {
         ContentValues cv = new ContentValues();
         cv.put(ScanContract.DeviceContract.FIELDISREGISTERED,"1");
@@ -378,6 +381,7 @@ public class AntDbHelper extends SQLiteOpenHelper {
                 cv,ScanContract.DeviceContract.DEVICEUUID + " LIKE ?",new String[]{scanId});
         Log.d("updateIsRegisteredByID","el valor de la consulta es "+c);
     }
+    /**Sección para actualizar campos que no se hayan registrado en el backend para la tabla de errores**/
     public void updateErrorCodesIsRegisteredById(String scanId) {
         ContentValues cv = new ContentValues();
         cv.put(ScanContract.ErrorCodesContract.FIELDISREGISTERED,"1");
@@ -386,15 +390,32 @@ public class AntDbHelper extends SQLiteOpenHelper {
         Log.d("updateIsRegisteredByID","el valor de la consulta es "+c);
     }
 
+    /**Conseguir los ID de los campos registrados según el estado de registro de la tabla principal*/
+    public ArrayList<Integer> getIdCellularRegisteredFields(Cursor getCellularInfoByIsRegistered){
+        ArrayList<Integer> arrayId = new ArrayList<Integer>();
+        int counter = 0;
+        while(getCellularInfoByIsRegistered.moveToNext()){
+            String scan_id = getCellularInfoByIsRegistered.getString(getCellularInfoByIsRegistered.getColumnIndex(ScanContract.ScanEntry._ID));
+            arrayId.add(Integer.parseInt(scan_id));
+        }
+        return arrayId;
+    }
+    /**Sección para borrar campos de la tabla pricipal según el ID primario**/
+    public void deleteCellularFieldsById(String id) {
+        int c = getWritableDatabase().delete(ScanContract.ScanEntry.TABLE_NAME,
+                ScanContract.ScanEntry._ID + " LIKE ?",new String[]{id});
+        Log.d("deleteCellularByOldDays","el valor de la consulta es "+c);
+    }
+
     /**Crea consultas para dibujar mapa **/
-    public ArrayList<String> getMapLteQuery(Cursor queryAllCellularInfo){
+    public ArrayList<String> getMapQuery(Cursor queryAllCellularInfo){
         Log.d("SqlLite","Entra a getMapQuery");
         ArrayList<String> queryMapFormat = new ArrayList<String>();
         int contador = 0;
 
         while(queryAllCellularInfo.moveToNext()){
             String operatorName = queryAllCellularInfo.getString(queryAllCellularInfo.getColumnIndex(ScanContract.ScanEntry.PHONEOPERATORID));
-            String phoneNetworType = queryAllCellularInfo.getString(queryAllCellularInfo.getColumnIndex(ScanContract.ScanEntry.PHONENETSTANDARD));
+            String phoneNetworType = queryAllCellularInfo.getString(queryAllCellularInfo.getColumnIndex(ScanContract.ScanEntry.PHONENETTECHNOLOGY));
             String phoneTimestamp = queryAllCellularInfo.getString(queryAllCellularInfo.getColumnIndex(ScanContract.ScanEntry.TIMESTAMP));
             String phoneSignalStrength = queryAllCellularInfo.getString(queryAllCellularInfo.getColumnIndex(ScanContract.ScanEntry.PHONESIGNALSTRENGTH));
             String signalQuality = queryAllCellularInfo.getString(queryAllCellularInfo.getColumnIndex(ScanContract.ScanEntry.SIGNALQUALITY));

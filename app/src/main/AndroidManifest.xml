@@ -18,9 +18,7 @@
         android:roundIcon="@drawable/arcotel_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+
 
         <service
             android:name=".services.FetchAddressIntentService"
@@ -33,6 +31,10 @@
             android:name=".services.ConectivityScanService"
             android:enabled="true"
             android:exported="true" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
         <activity
             android:name=".MainActivity"
@@ -48,6 +50,18 @@
             android:name=".AdvancedCellInfoActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="Información de red avanzada"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="Configuraciones de la aplicación"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait">
 

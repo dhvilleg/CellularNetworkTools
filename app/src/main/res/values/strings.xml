@@ -33,7 +33,8 @@
     <string name="txtview_wifiDownloadSpeed_ro">Wifi speed Mbps</string>
     <string name="txtview_wifiDownloadSpeed_rw"></string>
 
-    <string name="google_maps_key">AIzaSyBDmHDh1IcodepUcWz6mxGdxDOmLX8x76Y</string>
+    <string name="google_maps_key">AIzaSyCV6-sS6GyFn4AFNBjdU-Bz0xjk1wq-kl4</string>
+
 
     <string name="get_information">Get Information</string>
     <string name="hard_soft_info">Hardware and Software Information</string>
