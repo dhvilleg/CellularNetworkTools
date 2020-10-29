@@ -21,7 +21,7 @@ public class Constants {
     public static final double LONGITUDE_DEFAULT = -78.683545;
 
     public static final String URL_FOR_CELLULAR_DATA = "http://ec2-3-23-89-83.us-east-2.compute.amazonaws.com:80/add";
-    public static final String URL_FOR_DEVICE_DATA = "http://ec2-3-23-89-83.us-east-2.compute.amazonaws.com:80/adddevdata";
+    public static final String URL_FOR_DEVICE_DATA = "http://ec2-3-23-89-83.us-east-2.compute.amazonaws.com:80/adddev";
     public static final String URL_FOR_ERROR_DATA = "http://ec2-3-23-89-83.us-east-2.compute.amazonaws.com:80/adderrdata";
 
     public static final String INSTANCE_OF_CELLULAR = "cellular";

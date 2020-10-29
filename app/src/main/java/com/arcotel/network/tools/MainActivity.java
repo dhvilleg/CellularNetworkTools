@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
+import android.os.StrictMode;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -170,12 +171,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ConectivityScanService.setUpdateListener(this);
         checkPermissions();
 
+        //Depura la BDD al inicio de la aplicación
         debugCellularFields();
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
-
-
-        //Toast.makeText(MainActivity.this, "OnCreate", Toast.LENGTH_LONG).show();
 
         /**Settear por primera vez los valores del switch option sync_options se setea a falso y significa
          * que por defecto subirá los valores capturados por WIFI**/
@@ -195,40 +196,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             getGlobalSettings();
             //Instanciar Mapa
             instanceMap();
+            uploadByValueInSettings(Constants.URL_FOR_DEVICE_DATA,Constants.INSTANCE_OF_DEVICE);
+            uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
 
         }
         buttonStartCapture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Sin Internet, Colectar red movil
                 if(internetConStatusFlag == 1){
+                    showRatingBar();;
 
                 }
                 //Preparado
                 else if(internetConStatusFlag == 2){
-                    saveAllInfoToDataBase();
-                    Thread git = new Thread(){
-                        @Override
-                        public void run() {
-                            uploadCellDbInfoToApiRest(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
-                        }
-                    };git.start();
-
-                    cursorQuery = scanDbHelper.getCellularInfoByIsRegistered(0);
-
-                    ArrayList<String> quryCellularInfo= scanDbHelper.getCellularInfoInJson(cursorQuery);
-                    for (int i = 0; i < quryCellularInfo.size();i++){
-                        Log.d("ImprimeJson: ",""+quryCellularInfo.get(i));
-                    }
+                    doSpeedTest();
                 }
                 //Sin servicio Movil, Medir WIFI || Modo Avión, colectar WIFI
                 else if(internetConStatusFlag == 3 || internetConStatusFlag == 4){
-
+                    doSpeedTest();
                 }
             }
         });
 
 
-        Toast.makeText(this, switchSyncPref.toString(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, switchSyncPref.toString(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -245,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onStop() {
         super.onStop();
         stopLocationService();
+        pararConectivityScanService();
         //Toast.makeText(this, "AdvancedCellInfoActivity onStop", Toast.LENGTH_LONG).show();
     }
 
@@ -386,8 +378,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
                 ratingCounter = ""+ratingBar.getRating();
+                saveAllInfoToDataBase();
                 rankDialog.dismiss();
             }
         });
@@ -445,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
                 //Get egcodes.speedtest hosts
                 int timeCount = 600; //1min
+                pararConectivityScanService();
                 while (!getSpeedTestHostsHandler.isFinished()) {
                     timeCount--;
                     try {
@@ -457,8 +450,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             public void run() {
                                 Toast.makeText(getApplicationContext(), "No Connection...", Toast.LENGTH_LONG).show();
                                 buttonStartCapture.setEnabled(true);
-                                buttonStartCapture.setTextSize(16);
+                                //buttonStartCapture.setTextSize(16);
                                 buttonStartCapture.setText("Comenzar de nuevo");
+                                showRatingBar();
+                                iniciarConectivityScanService();
                                 Log.d("SpeedVars","El valor de ping es"+pingTimeMilis+" el valor de download es "+downloadSpeed+" el valor de upload es "+uploadSpeed);
                             }
                         });
@@ -506,6 +501,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void run() {
                             //buttonStartCapture.setTextSize(12);
                             buttonStartCapture.setText("Problemas con el servidor de localizacion, intente de nuevo.");
+                            showRatingBar();
+                            iniciarConectivityScanService();
                         }
                     });
                     return;
@@ -836,9 +833,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         buttonStartCapture.setEnabled(true);
                         //buttonStartCapture.setTextSize(16);
                         buttonStartCapture.setText("Comenzar de Nuevo");
-
                         showRatingBar();
-
+                        iniciarConectivityScanService();
                     }
                 });
 
@@ -969,9 +965,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fieldIsRegistered=0;
             DeviceMetadata deviceMetadata = new DeviceMetadata(uniqueId,deviceModel,deviceOS,osVersion,isDualSim,fieldIsRegistered);
             scanDbHelper.saveDeviceSqlScan(deviceMetadata);
+
             Log.d("MainActivity","Entra a createDeviceUUID: "+uniqueId);
         }
-
     }
 
     /**Consulta el UUID**/
@@ -1283,16 +1279,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+
     /**1) carga información colectada al API-REST
      * 2) actualiza el campo registeredfield en 1 en la base de datos
      * */
     public void uploadCellDbInfoToApiRest(final String url, final String instanceOf){
-
         Thread runOutUI = new Thread(){
             @Override
             public void run() {
                 ArrayList<String> jsonInputString = new ArrayList<String>();
-
                 if (instanceOf.equals(Constants.INSTANCE_OF_CELLULAR)) {
                     jsonInputString = scanDbHelper.getCellularInfoInJson(scanDbHelper.getCellularInfoByIsRegistered(Constants.REGISTERED_OFF));
                 }
@@ -1305,7 +1300,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (jsonInputString.size() != 0) {
                     for (int i = 0; i < jsonInputString.size(); i++) {
                         Log.d("URL_JSON", "LTEvalor de i es " + i);
-
                         HttpJsonPost jsonPost = new HttpJsonPost();
                         String[] jsonAndId = jsonInputString.get(i).split(";");
                         Log.d("URL_JSON", "Crea y envia jsonInputString " + jsonAndId[0]);
@@ -1326,7 +1320,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 }
+                else{
+                    Log.d("URL_JSON", "No hay datos que subir");
+                }
             }
         };runOutUI.start();
     }
+
+    /**Revisa si en settings está habilitada la opción de carga por red Móvil o Wifi y habilita según el caso */
+    public void uploadByValueInSettings(String url, String instanceOf){
+        scanCellularActivity = new ScanCellularActivity(getApplicationContext());
+        if(scanCellularActivity.getDevIsConected()){
+            if(switchSyncPref){
+                if(scanCellularActivity.getNetworkConectivityType().equals("WIFI") || scanCellularActivity.getNetworkConectivityType().equals("MOBILE")){
+                    uploadCellDbInfoToApiRest(url,instanceOf);
+                }
+            }
+            else{
+                if(scanCellularActivity.getNetworkConectivityType().equals("WIFI")){
+                    uploadCellDbInfoToApiRest(url,instanceOf);
+                }
+            }
+        }
+    }
+
 }

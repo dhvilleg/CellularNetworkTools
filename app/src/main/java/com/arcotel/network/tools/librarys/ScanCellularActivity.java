@@ -164,6 +164,7 @@ public class ScanCellularActivity {
     }
 
     public boolean getDevIsConected() {
+
         try {
             InetAddress address = InetAddress.getByName("www.google.com");
             return !address.equals("");
