@@ -1,6 +1,8 @@
 package com.arcotel.network.tools.test;
 
 
+import android.util.Log;
+
 import java.io.DataOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -113,6 +115,7 @@ class HandlerUpload extends Thread {
 
             try {
                 HttpURLConnection conn = null;
+                Log.d("EnInternetTest","url es_ "+url);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setDoOutput(true);
                 conn.setRequestMethod("POST");

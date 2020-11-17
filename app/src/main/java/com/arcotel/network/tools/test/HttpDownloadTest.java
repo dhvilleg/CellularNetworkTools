@@ -1,5 +1,7 @@
 package com.arcotel.network.tools.test;
 
+import android.util.Log;
+
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -69,9 +71,11 @@ public class HttpDownloadTest extends Thread {
         downloadedByte = 0;
         int responseCode = 0;
 
+
         List<String> fileUrls = new ArrayList<>();
         fileUrls.add(fileURL + "random4000x4000.jpg");
         fileUrls.add(fileURL + "random3000x3000.jpg");
+        fileUrls.add("http://speedtest1.netlife.ec:8080/speedtest/random4000x4000.jpg");
 
         startTime = System.currentTimeMillis();
 
@@ -79,6 +83,7 @@ public class HttpDownloadTest extends Thread {
         for (String link : fileUrls) {
             try {
                 url = new URL(link);
+                Log.d("enDowloadVerUrl","la url para descarga es: "+link);
                 httpConn = (HttpURLConnection) url.openConnection();
                 responseCode = httpConn.getResponseCode();
             } catch (Exception ex) {
@@ -105,7 +110,7 @@ public class HttpDownloadTest extends Thread {
                     inputStream.close();
                     httpConn.disconnect();
                 } else {
-                    System.out.println("Link not found...");
+                    System.out.println("Link not found eeeeerdddd...");
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

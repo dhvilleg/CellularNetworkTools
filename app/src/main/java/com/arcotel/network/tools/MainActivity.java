@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             instanceMap();
             uploadByValueInSettings(Constants.URL_FOR_DEVICE_DATA,Constants.INSTANCE_OF_DEVICE);
             uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
-
         }
         buttonStartCapture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -380,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View v) {
                 ratingCounter = ""+ratingBar.getRating();
                 saveAllInfoToDataBase();
+                instanceMap();
                 rankDialog.dismiss();
             }
         });
@@ -399,11 +399,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         intentAdvanced.putExtra("key", "value"); //Optional parameters
                         startActivity(intentAdvanced);
                         break;
-                    case R.id.main_show_stats:
-                        Intent intendStats = new Intent(MainActivity.this, StatsActivity.class);
-                        intendStats.putExtra("key", "value"); //Optional parameters
-                        startActivity(intendStats);
-                        break;
+                    //case R.id.main_show_stats:
+                    //    Intent intendStats = new Intent(MainActivity.this, StatsActivity.class);
+                    //    intendStats.putExtra("key", "value"); //Optional parameters
+                    //    startActivity(intendStats);
+                    //    break;
                     case R.id.main_setup_application:
                         Intent intentSetup = new Intent(MainActivity.this, SettingsActivity.class);
                         intentSetup.putExtra("key", "value"); //Optional parameters
@@ -833,6 +833,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         buttonStartCapture.setEnabled(true);
                         //buttonStartCapture.setTextSize(16);
                         buttonStartCapture.setText("Comenzar de Nuevo");
+                        try {
+                            Thread.sleep(8000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         showRatingBar();
                         iniciarConectivityScanService();
                     }
