@@ -92,7 +92,7 @@ public class ConectivityScanService extends Service {
                         signalQuality = "BAD";
                     }
                     else {
-                        signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0));
+                        signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneServiceInfo.get(7));
                         phoneNetwork = scanCellularActivity.getPhoneNetworType();
                         operatorName = scanCellularActivity.getDevSimOperatorName();
                         phoneNetworkConection = "Ninguna";
@@ -111,11 +111,11 @@ public class ConectivityScanService extends Service {
                         signalQuality = "BAD";
                     }
                     else {
-                        signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0));
+                        signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneServiceInfo.get(7));
                         phoneNetwork = scanCellularActivity.getPhoneNetworType();
                         operatorName = scanCellularActivity.getDevSimOperatorName();
                         phoneNetworkConection = scanCellularActivity.getNetworkConectivityType();
-                        buttonStartCaptureTxt = "Preparado";
+                        buttonStartCaptureTxt = "Iniciar Test de internet";
                         buttonStartCaptureBool = true;
                         flag = 2;
                         allInfoInArray = setAllVariables(phoneNetwork,phoneServiceInfo,strengthInfo,cellInfo);
@@ -205,7 +205,7 @@ public class ConectivityScanService extends Service {
 
 
         //4G
-        if(phoneNetwork == "LTE") {
+        if(phoneNetwork == "LTE" && strengthInfo.size() > 3) {
             allPhoneArray.add(phoneServiceInfo.get(0));//countryISO
             allPhoneArray.add(phoneServiceInfo.get(1));//phoneOperatorId
             allPhoneArray.add(phoneServiceInfo.get(2));//simOperatorId
@@ -218,7 +218,7 @@ public class ConectivityScanService extends Service {
             allPhoneArray.add(strengthInfo.get(0).toString());//phoneSignalStrength
             allPhoneArray.add(strengthInfo.get(1).toString());//phoneAsuStrength
             allPhoneArray.add(strengthInfo.get(2).toString());//phoneSignalLevel
-            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0)));//signalQuality
+            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneServiceInfo.get(7)));//signalQuality
             allPhoneArray.add(strengthInfo.get(3).toString());//RSRP: Reference Signal Received Power
             allPhoneArray.add(strengthInfo.get(5).toString());//TA: Timing Advance
             allPhoneArray.add(strengthInfo.get(6).toString());// CQI: Channel Quality Indicator
@@ -257,7 +257,7 @@ public class ConectivityScanService extends Service {
             allPhoneArray.add(strengthInfo.get(0).toString());//phoneSignalStrength
             allPhoneArray.add(strengthInfo.get(1).toString());//phoneAsuStrength
             allPhoneArray.add(strengthInfo.get(2).toString());//phoneSignalLevel
-            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0)));//signalQuality
+            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneServiceInfo.get(7)));//signalQuality
             allPhoneArray.add("NULL");//RSRP: Reference Signal Received Power
             allPhoneArray.add("NULL");//RSRQ: Reference Signal Received Quality
             allPhoneArray.add("NULL");//TA: Timing Advance
@@ -296,7 +296,7 @@ public class ConectivityScanService extends Service {
             allPhoneArray.add(strengthInfo.get(0).toString());//phoneSignalStrength
             allPhoneArray.add(strengthInfo.get(1).toString());//phoneAsuStrength
             allPhoneArray.add(strengthInfo.get(2).toString());//phoneSignalLevel
-            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0)));//signalQuality
+            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneServiceInfo.get(7)));//signalQuality
             allPhoneArray.add("NULL");//RSRP: Reference Signal Received Power
             allPhoneArray.add("NULL");//RSRQ: Reference Signal Received Quality
             allPhoneArray.add("NULL");//TA: Timing Advance
@@ -335,7 +335,7 @@ public class ConectivityScanService extends Service {
             allPhoneArray.add(strengthInfo.get(0).toString());//phoneSignalStrength
             allPhoneArray.add(strengthInfo.get(1).toString());//phoneAsuStrength
             allPhoneArray.add(strengthInfo.get(2).toString());//phoneSignalLevel
-            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0)));//signalQuality
+            allPhoneArray.add(scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneServiceInfo.get(7)));//signalQuality
             allPhoneArray.add("NULL");//RSRP: Reference Signal Received Power
             allPhoneArray.add("NULL");//RSRQ: Reference Signal Received Quality
             allPhoneArray.add("NULL");//TA: Timing Advance

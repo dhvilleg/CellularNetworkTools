@@ -2,6 +2,7 @@ package com.arcotel.network.tools;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,6 +42,7 @@ import androidx.preference.PreferenceManager;
 
 import com.arcotel.network.tools.data.Constants;
 import com.arcotel.network.tools.data.DeviceMetadata;
+import com.arcotel.network.tools.data.ErrorCodesMetadata;
 import com.arcotel.network.tools.data.ScanMetadata;
 import com.arcotel.network.tools.librarys.LocationAddress;
 import com.arcotel.network.tools.librarys.ScanCellularActivity;
@@ -172,7 +174,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         checkPermissions();
 
         //Depura la BDD al inicio de la aplicación
-        debugCellularFields();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                debugCellularFields();
+            }
+        });
+
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -187,37 +195,53 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-        String[] ungrantedPermissions = requiredPermissionsStillNeeded();
-        if (ungrantedPermissions.length == 0) {
-            iniciarConectivityScanService();
-            displayLocation(SINGLE_LOCATION);
-            signalStrengthListener();
-            onBottonNavigationPress();
-            getGlobalSettings();
-            //Instanciar Mapa
-            instanceMap();
-            uploadByValueInSettings(Constants.URL_FOR_DEVICE_DATA,Constants.INSTANCE_OF_DEVICE);
-            uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
-        }
-        buttonStartCapture.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //Sin Internet, Colectar red movil
-                if(internetConStatusFlag == 1){
-                    showRatingBar();;
-
-                }
-                //Preparado
-                else if(internetConStatusFlag == 2){
-                    doSpeedTest();
-                }
-                //Sin servicio Movil, Medir WIFI || Modo Avión, colectar WIFI
-                else if(internetConStatusFlag == 3 || internetConStatusFlag == 4){
-                    doSpeedTest();
-                }
+        try{
+            String[] ungrantedPermissions = requiredPermissionsStillNeeded();
+            if (ungrantedPermissions.length == 0) {
+                iniciarConectivityScanService();
+                displayLocation(SINGLE_LOCATION);
+                signalStrengthListener();
+                onBottonNavigationPress();
+                getGlobalSettings();
+                //Instanciar Mapa
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        instanceMap();
+                    }
+                });
+                uploadByValueInSettings(Constants.URL_FOR_DEVICE_DATA,Constants.INSTANCE_OF_DEVICE);
+                uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
+                uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_ERROR);
             }
-        });
+            buttonStartCapture.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //Sin Internet, Colectar red movil
+                    if(internetConStatusFlag == 1){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                saveAllInfoToDataBase();
+                                instanceMap();
+                            }
+                        });
+                    }
+                    //Preparado
+                    else if(internetConStatusFlag == 2){
 
+                        doSpeedTest();
+                    }
+                    //Sin servicio Movil, Medir WIFI || Modo Avión, colectar WIFI
+                    else if(internetConStatusFlag == 3 || internetConStatusFlag == 4){
 
+                        doSpeedTest();
+                    }
+                }
+            });
+        }catch(Exception ex){
+            ErrorCodesMetadata errorCodesMetadata = new ErrorCodesMetadata(consultaDeviceUUID(),"Error en OnResume Main Activity",""+ex,0);
+            scanDbHelper.saveErrorCodesSqlScan(errorCodesMetadata);
+        }
         //Toast.makeText(this, switchSyncPref.toString(),Toast.LENGTH_SHORT).show();
     }
 
@@ -250,19 +274,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**Inicia el servicio*/
     private void iniciarConectivityScanService() {
         Intent service = new Intent(this, ConectivityScanService.class);
+        Log.d("iniciarConectivityScan","Entra en iniciarConectivityScan");
         startService(service);
+
+
     }
 
     /**Finaliza el servicio*/
     private void pararConectivityScanService() {
         Intent service = new Intent(this, ConectivityScanService.class);
+        buttonStartCapture.setEnabled(false);
+        Log.d("pararConectivityScan","llamar a parar! en iniciarConectivityScan");
         stopService(service);
     }
 
-    /**Metodo para llamar a las preferencias globales**/
+    /**Tomar las preferencias globles, aplicar el filtro de la preferencia usando el KEY "uploadSetting"
+     * y asignarlo a la variable**/
     private  void getGlobalSettings(){
-        /**Tomar las preferencias globles, aplicar el filtro de la preferencia usando el KEY "uploadSetting"
-         * y asignarlo a la variable**/
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         switchSyncPref = sharedPref.getBoolean ("uploadSetting", false);
     }
@@ -272,8 +301,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         textViewTechCell.setText(phoneNetwork);
         textViewInternetCon.setText(phoneNetworkConection);
         textViewOperatorName.setText(operatorName);
-        buttonStartCapture.setText(buttonStartCaptureTxt);
-        buttonStartCapture.setEnabled(buttonStartCaptureBool);
+        if(isServiceRunning(this, "com.arcotel.network.tools.services.ConectivityScanService")){
+            buttonStartCapture.setText(buttonStartCaptureTxt);
+            buttonStartCapture.setEnabled(buttonStartCaptureBool);
+            Log.d("actualizaUiOnMain","Entra en actualizaUiOnMainActivity, servicio esta en: true");
+        }
+
         internetConStatusFlag = flag;
         getAllInfo = allInfoInArray;
 
@@ -289,10 +322,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_yellow);
         }
         else if(signalQuality.equals("BAD")){
-            imageViewSignalPower.setImageResource(R.drawable.cellsignal_status_orange);
+            imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_red);
         }
         else if(signalQuality.equals("VERY_BAD")){
-            imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_red);
+            imageViewSignalPower.setImageResource(R.drawable.cell_signal_status_gray);
         }
         else if(signalQuality.equals("NONE")){
             imageViewSignalPower.setImageResource(R.drawable.cell_no_signal_status);
@@ -305,7 +338,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (getSpeedTestHostsHandler == null) {
                 getSpeedTestHostsHandler = new GetSpeedTestHostsHandler();
                 getSpeedTestHostsHandler.start();
-
             }
             internetISP = getSpeedTestHostsHandler.getSelfLisp();
             ipPublicAddr = getSpeedTestHostsHandler.getSelfLip();
@@ -318,7 +350,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (getSpeedTestHostsHandler == null) {
                 getSpeedTestHostsHandler = new GetSpeedTestHostsHandler();
                 getSpeedTestHostsHandler.start();
-
             }
             internetISP = getSpeedTestHostsHandler.getSelfLisp();
             ipPublicAddr = getSpeedTestHostsHandler.getSelfLip();
@@ -328,7 +359,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         else{
-
             getSpeedTestHostsHandler = null;
             ipPublicAddr = "NULL";
             internetISP = "NULL";
@@ -366,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /** Método que publica el ratting bar**/
     public void showRatingBar(){
+
         float userRankValue=0;
         rankDialog = new Dialog(MainActivity.this, R.style.FullHeightDialog);
         rankDialog.setContentView(R.layout.rank_dialog);
@@ -378,8 +409,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 ratingCounter = ""+ratingBar.getRating();
-                saveAllInfoToDataBase();
-                instanceMap();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        saveAllInfoToDataBase();
+                        instanceMap();
+                    }
+                });
+
                 rankDialog.dismiss();
             }
         });
@@ -418,8 +456,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**Método para la prueba de velocidad de internet**/
     private void doSpeedTest(){
+        pararConectivityScanService();
         final DecimalFormat dec = new DecimalFormat("#.##");
         buttonStartCapture.setEnabled(false);
+        Log.d("doSpeedTest","false");
         tempBlackList = new HashSet<>();
         //Restart test icin eger baglanti koparsa
         if (getSpeedTestHostsHandler == null) {
@@ -436,8 +476,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
                 //Get egcodes.speedtest hosts
-                int timeCount = 600; //1min
-                pararConectivityScanService();
+                int timeCount = 100; //1min
+
                 while (!getSpeedTestHostsHandler.isFinished()) {
                     timeCount--;
                     try {
@@ -451,8 +491,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 Toast.makeText(getApplicationContext(), "No Connection...", Toast.LENGTH_LONG).show();
                                 buttonStartCapture.setEnabled(true);
                                 //buttonStartCapture.setTextSize(16);
-                                buttonStartCapture.setText("Comenzar de nuevo");
-                                showRatingBar();
+                                buttonStartCapture.setText("INICIAR TEST DE INTERNET");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        saveAllInfoToDataBase();
+                                        instanceMap();
+                                        uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
+                                        uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_ERROR);
+
+                                    }
+                                });
                                 iniciarConectivityScanService();
                                 Log.d("SpeedVars","El valor de ping es"+pingTimeMilis+" el valor de download es "+downloadSpeed+" el valor de upload es "+uploadSpeed);
                             }
@@ -501,8 +550,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         public void run() {
                             //buttonStartCapture.setTextSize(12);
                             buttonStartCapture.setText("Problemas con el servidor de localizacion, intente de nuevo.");
-                            showRatingBar();
-                            iniciarConectivityScanService();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    saveAllInfoToDataBase();
+                                    instanceMap();
+                                    uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
+                                    uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_ERROR);
+                                    iniciarConectivityScanService();
+                                }
+                            });
+
                         }
                     });
                     return;
@@ -512,9 +570,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void run() {
                         //buttonStartCapture.setTextSize(13);
+
                         buttonStartCapture.setText(String.format("Host Location: %s [Distance: %s km]", info.get(2), new DecimalFormat("#.##").format(distance / 1000)));
                     }
                 });
+
+
 
                 //Init Ping graphic
 
@@ -583,6 +644,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
+
                         pingTextView.setText("0 ms");
                         chartPing.removeAllViews();
                         downloadTextView.setText("0 Mbps");
@@ -603,7 +666,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 //Init Test
                 final PingTest pingTest = new PingTest(info.get(6).replace(":8080", ""), 6);
-                final HttpDownloadTest downloadTest = new HttpDownloadTest(uploadAddr.replace(uploadAddr.split("/")[uploadAddr.split("/").length - 1], ""));
+                final HttpDownloadTest downloadTest = new HttpDownloadTest(uploadAddr.replace(uploadAddr.split("/")[uploadAddr.split("/").length - 1], ""),getAllInfo.get(8));
                 final HttpUploadTest uploadTest = new HttpUploadTest(uploadAddr);
 
 
@@ -832,13 +895,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void run() {
                         buttonStartCapture.setEnabled(true);
                         //buttonStartCapture.setTextSize(16);
-                        buttonStartCapture.setText("Comenzar de Nuevo");
+                        buttonStartCapture.setText("INICIAR TEST DE INTERNET");
                         try {
                             Thread.sleep(8000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        showRatingBar();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                saveAllInfoToDataBase();
+                                instanceMap();
+                                uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_CELLULAR);
+                                uploadByValueInSettings(Constants.URL_FOR_CELLULAR_DATA,Constants.INSTANCE_OF_ERROR);
+                            }
+                        });
                         iniciarConectivityScanService();
                     }
                 });
@@ -976,7 +1047,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**Consulta el UUID**/
-    private String consultaDeviceUUID(){
+    public String consultaDeviceUUID(){
         String deviceUUID="";
         cursorQuery = scanDbHelper.getAllDeviceInfo();
         deviceUUID = scanDbHelper.getDeviceUUID(cursorQuery);
@@ -1221,37 +1292,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.d("onMapReady","Entra a queryMapFormat en onMapReady valor de i es "+i);
                     String operatorName = parts[0];
                     String phoneNetworType = parts[1];
-                    int phoneSignalStrength = Integer.parseInt(parts[2]);
+                    String phoneSignalStrength = parts[2];
                     String timestamp = parts[3];
                     latitude = Double.parseDouble(parts[4]);
                     String signalQuality = parts[6];
                     longitudeMDouble = Double.parseDouble(parts[5]);
                     if(latitude != 0.0 && longitudeMDouble != 0.0){
                         Log.d("OnMapReadyVista","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble+" signalQuality: "+signalQuality);
-                        if(signalQuality.equals("VERY_GOOD")){
-                            Log.d("OnMapReady VERY_GOOD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                        if(i == drawMapData.size() - 1){
                             googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_green_s)));
+                                    .icon(BitmapDescriptorFactory.fromResource(evalIconToDrawInMap("last",signalQuality))));
                         }
-                        else if(signalQuality.equals("GOOD")){
-                            Log.d("OnMapReady GOOD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
+                        else{
                             googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_yellow_s)));
-                        }
-                        else if(signalQuality.equals("AVERAGE")){
-                            Log.d("OnMapReady AVERAGE","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
-                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_orange_s)));
-                        }
-                        else if(signalQuality.equals("BAD")){
-                            Log.d("OnMapReady BAD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
-                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_red_s)));
-                        }
-                        else if(signalQuality.equals("VERY_BAD")){
-                            Log.d("OnMapReady BAD","OperatorName : "+operatorName+" phoneNetworType "+phoneNetworType+" phoneSignalStrength "+phoneSignalStrength+" timestamp "+timestamp+" latitude "+latitude+" longitudeMDouble "+longitudeMDouble);
-                            googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitudeMDouble)).title(""+operatorName+"| Red Movil: "+phoneNetworType).snippet(" | Potencia: "+phoneSignalStrength+" | Timestamp : "+timestamp)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.radio_icon_gray_s)));
+                                    .icon(BitmapDescriptorFactory.fromResource(evalIconToDrawInMap("normal",signalQuality))));
                         }
                     }
                 }
@@ -1333,20 +1387,95 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     /**Revisa si en settings está habilitada la opción de carga por red Móvil o Wifi y habilita según el caso */
-    public void uploadByValueInSettings(String url, String instanceOf){
+    public void uploadByValueInSettings(final String url, final String instanceOf){
+        Log.d("uploadByValueInSettings","entra a uploadByValueInSettings");
         scanCellularActivity = new ScanCellularActivity(getApplicationContext());
-        if(scanCellularActivity.getDevIsConected()){
-            if(switchSyncPref){
-                if(scanCellularActivity.getNetworkConectivityType().equals("WIFI") || scanCellularActivity.getNetworkConectivityType().equals("MOBILE")){
-                    uploadCellDbInfoToApiRest(url,instanceOf);
+        final boolean[] devIsConected = {false};
+
+        Thread runOutUI = new Thread(){
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void run() {
+                devIsConected[0] = scanCellularActivity.getDevIsConected();
+                Log.d("uploadByValueInSettings","entra a ver si hay internet en Main, valor es: "+devIsConected[0]);
+                if(devIsConected[0]){
+                    if(switchSyncPref){
+                        Log.d("uploadByValueInSettings","entra a ver si hay internet en if de Main, valor es: "+devIsConected[0]);
+                        if(scanCellularActivity.getNetworkConectivityType().equals("WIFI") || scanCellularActivity.getNetworkConectivityType().equals("MOBILE")){
+                            uploadCellDbInfoToApiRest(url,instanceOf);
+                        }
+                    }
+                    else{
+                        if(scanCellularActivity.getNetworkConectivityType().equals("WIFI")){
+                            Log.d("uploadByValueInSettings","entra a ver si hay internet en else de Main, valor es: "+devIsConected[0]);
+                            uploadCellDbInfoToApiRest(url,instanceOf);
+                        }
+                    }
                 }
+
             }
-            else{
-                if(scanCellularActivity.getNetworkConectivityType().equals("WIFI")){
-                    uploadCellDbInfoToApiRest(url,instanceOf);
-                }
+
+        };runOutUI.start();
+
+
+    }
+
+    /**Método auxiliar para determinar valor del icono a pintarse en el mapa**/
+    public int evalIconToDrawInMap(String flag,String signalQuality){
+        int iconToDraw = R.drawable.dot_icon_gray_s;
+        Log.d("evalIconToDrawInMap", "entra a metodo, valor signalQuality: "+signalQuality);
+        if(flag.equals("normal")){
+            switch (signalQuality){
+                case "VERY_GOOD":
+                case "GOOD":
+                    iconToDraw = R.drawable.dot_icon_green_s;
+                    return  iconToDraw;
+                case "AVERAGE":
+                    iconToDraw = R.drawable.dot_icon_yellow_s;
+                    return  iconToDraw;
+                case "BAD":
+                    iconToDraw = R.drawable.dot_icon_red_s;
+                    return  iconToDraw;
+                case "VERY_BAD":
+                    iconToDraw = R.drawable.dot_icon_gray_s;
+                    return  iconToDraw;
+
+            }
+            Log.d("evalIconToDrawInMap", "entra a if normal, valor signalQuality: "+signalQuality+" iconToDraw");
+        }
+        else{
+            switch (signalQuality){
+                case "VERY_GOOD":
+                case "GOOD":
+                    iconToDraw = R.drawable.radio_icon_green_s;
+                    return  iconToDraw;
+                case "AVERAGE":
+                    iconToDraw = R.drawable.radio_icon_yellow_s_all;
+                    return  iconToDraw;
+                case "BAD":
+                    iconToDraw = R.drawable.radio_icon_red_s_all;
+                    return  iconToDraw;
+                case "VERY_BAD":
+                    iconToDraw = R.drawable.radio_icon_gray_s_all;
+                    return  iconToDraw;
+            }
+            Log.d("evalIconToDrawInMap", "entra a else normal, valor signalQuality: "+signalQuality+" iconToDraw");
+       }
+        return  iconToDraw;
+    }
+
+
+    public static boolean isServiceRunning(Context context,String serviceClassName){
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningServiceInfo runningServiceInfo : services) {
+            Log.d("isServiceRun","Valor es: "+runningServiceInfo.service.getClassName());
+            if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
+                return true;
             }
         }
+        return false;
     }
 
 }

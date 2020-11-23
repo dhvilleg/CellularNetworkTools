@@ -30,19 +30,16 @@ import androidx.annotation.RequiresApi;
 
 import com.arcotel.network.tools.GetSpeedTestHostsHandler;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScanCellularActivity {
 
-    private static int VERY_BAD=-110;
-    private static int BAD=-101;
-    private static int AVERAGE=-81;
-    private static int GOOD=-80;
-    private static int VERY_GOOD=-75;
+
 
 
     String ispName = "---";
@@ -163,16 +160,33 @@ public class ScanCellularActivity {
 
     }
 
-    public boolean getDevIsConected() {
+    /*public boolean getDevIsConected() {
 
         try {
-            InetAddress address = InetAddress.getByName("www.google.com");
+            InetAddress address = InetAddress.getByName("www.speedtest.net");
             return !address.equals("");
         } catch (UnknownHostException e) {
             // Log error
 
         }
         return false;
+    }*/
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public boolean getDevIsConected(){
+        try {
+            HttpURLConnection urlc = (HttpURLConnection) (new URL(
+                    "http://www.google.com").openConnection());
+            urlc.setRequestProperty("User-Agent", "Test");
+            urlc.setRequestProperty("Connection", "close");
+            Log.d("getDevIsConected","entra aca al final");
+            urlc.setConnectTimeout(1000);
+            urlc.setReadTimeout(1000);
+            urlc.connect();
+            // networkcode2 = urlc.getResponseCode();
+            return (urlc.getResponseCode() == 200);
+        } catch (IOException e) {
+            return (false);
+        }
     }
 
     public String getDevCountryIso() {
@@ -378,17 +392,56 @@ public class ScanCellularActivity {
         return cellItentity;
     }
 
-    public String getSignalQuality(int dbm){
+    public String getSignalQuality(int dbm, String phoneNetwork){
+
+        int NEGRO=0;
+        int ROJO=0;
+        int AMARILLO=0;
+        int VERDE=0;
+
+        if(phoneNetwork == "LTE"){
+            VERDE = -75;
+            AMARILLO = -80;
+            ROJO = -100;
+            NEGRO = -130;
+        }
+        else if(phoneNetwork == "HSPA+" || phoneNetwork == "HSPA" || phoneNetwork == "UMTS"){
+            VERDE = -75;
+            AMARILLO = -80;
+            ROJO = -98;
+            NEGRO = -120;
+        }
+        else if(phoneNetwork == "GSM" || phoneNetwork == "GPRS" || phoneNetwork == "EDGE"){
+            VERDE = -75;
+            AMARILLO = -85;
+            ROJO = -98;
+            NEGRO = -110;
+        }
+        else if(phoneNetwork == "CDMA" || phoneNetwork == "EVDO_0" || phoneNetwork == "EVDO_A" || phoneNetwork == "EVDO_B"){
+            VERDE = -75;
+            AMARILLO = -85;
+            ROJO = -98;
+            NEGRO = -110;
+        }
+        else{
+            VERDE = 0;
+            AMARILLO = 0;
+            ROJO = 0;
+            NEGRO = 0;
+        }
+
         String signalQuality="";
-        if(dbm >= VERY_GOOD){
+        if(dbm >= VERDE){
             signalQuality = "VERY_GOOD";
-        }else if(dbm >= GOOD ){
+        }
+        else if(dbm >=AMARILLO){
             signalQuality = "GOOD";
-        }else if(dbm >= AVERAGE ){
+        }
+        else if(dbm >= ROJO && dbm < AMARILLO ){
             signalQuality = "AVERAGE";
-        }else if(dbm >= BAD ){
+        }else if(dbm >= NEGRO && dbm < ROJO ){
             signalQuality = "BAD";
-        }else if (dbm >= VERY_BAD){
+        }else if(dbm <= NEGRO ){
             signalQuality = "VERY_BAD";
         }else {
             signalQuality = "UNKNOWN";

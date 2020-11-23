@@ -19,7 +19,7 @@ import java.util.TimerTask;
 
 public class AdvancedCellInfoUIService extends Service {
     private Timer temporizador = new Timer();
-    private static final long INTERVALO_ACTUALIZACION = 1000; // En ms
+    private static final long INTERVALO_ACTUALIZACION = 500; // En ms
     public static AdvancedCellInfoActivity UPDATE_LISTENER_ADVANCED_ACTIVITY;
     private Handler handler;
     //Definicion de variables de entorno para actualizacion de UI
@@ -100,7 +100,7 @@ public class AdvancedCellInfoUIService extends Service {
                             strengthTxtString = "---";
                         }
                         else {
-                            signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0));
+                            signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneNetwork);
                             strengthTxtString = "RSSI: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
                         }
                         if(cellIdInfo.isEmpty() ){
@@ -117,8 +117,8 @@ public class AdvancedCellInfoUIService extends Service {
                             strengthTxtString = "---";
                         }
                         else {
-                            signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0));
-                            strengthTxtString = "RSRP: "+strengthInfo.get(3)+"dBm\nRSRQ: "+strengthInfo.get(4)+"dB\nTA: "+strengthInfo.get(5);
+                            signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneNetwork);
+                            strengthTxtString = "RSRP: "+strengthInfo.get(3)+"dBm\nRSRQ: "+strengthInfo.get(4);
                         }
                         if(cellIdInfo.isEmpty() ){
                             signalQuality = "BAD";
@@ -134,7 +134,7 @@ public class AdvancedCellInfoUIService extends Service {
                             strengthTxtString = "---";
                         }
                         else {
-                            signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0));
+                            signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneNetwork);
                             strengthTxtString = "RSSI: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
                         }
                         if(cellIdInfo.isEmpty() ){

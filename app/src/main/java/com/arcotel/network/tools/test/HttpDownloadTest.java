@@ -24,11 +24,13 @@ public class HttpDownloadTest extends Thread {
     boolean finished = false;
     double instantDownloadRate = 0;
     int timeout = 15;
+    String internetType = "";
 
     HttpURLConnection httpConn = null;
 
-    public HttpDownloadTest(String fileURL) {
+    public HttpDownloadTest(String fileURL,String internetType) {
         this.fileURL = fileURL;
+        this.internetType = internetType;
     }
 
     private double round(double value, int places) {
@@ -73,9 +75,16 @@ public class HttpDownloadTest extends Thread {
 
 
         List<String> fileUrls = new ArrayList<>();
-        fileUrls.add(fileURL + "random4000x4000.jpg");
-        fileUrls.add(fileURL + "random3000x3000.jpg");
-        fileUrls.add("http://speedtest1.netlife.ec:8080/speedtest/random4000x4000.jpg");
+        //fileUrls.add(fileURL + "random4000x4000.jpg");
+        //fileUrls.add(fileURL + "random3000x3000.jpg");
+        //fileUrls.add("http://speedtest.mia.hivelocity.net:8080/speedtest/random3000x3000.jpg");
+        if(internetType.equals("WIFI")){
+            fileUrls.add("http://speedtest.mia.hivelocity.net:8080/speedtest/random4000x4000.jpg");
+        }
+        else{
+            fileUrls.add("http://speedtest.mia.hivelocity.net:8080/speedtest/random1000x1000.jpg");
+        }
+
 
         startTime = System.currentTimeMillis();
 

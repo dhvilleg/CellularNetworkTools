@@ -27,7 +27,8 @@ public class HttpUploadTest extends Thread {
     long startTime;
 
     public HttpUploadTest(String fileURL) {
-        this.fileURL = fileURL;
+        //this.fileURL = fileURL;
+        this.fileURL = "http://speedtest.mia.hivelocity.net:8080/speedtest/upload.php";
     }
 
     private double round(double value, int places) {
@@ -71,6 +72,7 @@ public class HttpUploadTest extends Thread {
     public void run() {
         try {
             URL url = new URL(fileURL);
+
             uploadedKByte = 0;
             startTime = System.currentTimeMillis();
 

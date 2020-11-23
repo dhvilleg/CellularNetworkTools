@@ -16,13 +16,13 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.arcotel.network.tools.data.Constants;
+import com.arcotel.network.tools.data.ErrorCodesMetadata;
 import com.arcotel.network.tools.services.AdvancedCellInfoUIService;
 import com.arcotel.network.tools.services.FetchAddressIntentService;
 
@@ -38,6 +38,7 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
     private TextView textViewInternetInfo;
     private TextView textViewLocationInfo;
     private TextView textViewTechCellACI;
+    private AntDbHelper scanDbHelper;
 
     private String aux = "none";
 
@@ -67,30 +68,41 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
 
         //enableGPS();
 
+        //Instanciar objeto que crea la BDD
+        scanDbHelper = new AntDbHelper(getApplicationContext());
+
 
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         mResultReceiver = new AddressResultReceiver(new Handler());
 
-        Toast.makeText(this, "AdvancedCellInfoActivity OnCreate", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "AdvancedCellInfoActivity OnCreate", Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Toast.makeText(this, "AdvancedCellInfoActivity onStart", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "AdvancedCellInfoActivity onStart", Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        AdvancedCellInfoUIService.setUpdateListener(this);
-        iniciarCellularCoverageService();
+        try{
+            AdvancedCellInfoUIService.setUpdateListener(this);
+            iniciarCellularCoverageService();
 
-        displayLocation(SINGLE_LOCATION);
+            displayLocation(SINGLE_LOCATION);
 
-        Toast.makeText(this, "AdvancedCellInfoActivity onResume", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "AdvancedCellInfoActivity onResume", Toast.LENGTH_LONG).show();
+        }catch (Exception ex){
+            MainActivity mainActivity = new MainActivity();
+            ErrorCodesMetadata errorCodesMetadata = new ErrorCodesMetadata(mainActivity.consultaDeviceUUID(),"Error en OnResume Main Activity",""+ex,0);
+            scanDbHelper.saveErrorCodesSqlScan(errorCodesMetadata);
+        }
+
+
     }
 
     @Override
@@ -99,7 +111,7 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
         pararCellularCoverageService();
         stopLocationService();
 
-        Toast.makeText(this, "AdvancedCellInfoActivity onPause", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "AdvancedCellInfoActivity onPause", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -107,13 +119,13 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
         super.onStop();
         pararCellularCoverageService();
         stopLocationService();
-        Toast.makeText(this, "AdvancedCellInfoActivity onStop", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "AdvancedCellInfoActivity onStop", Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "AdvancedCellInfoActivity onDestroy", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "AdvancedCellInfoActivity onDestroy", Toast.LENGTH_LONG).show();
         pararCellularCoverageService();
 
     }
@@ -148,19 +160,17 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
 
         switch (signalQuality) {
             case "VERY_GOOD":
+            case "GOOD":
                 imageViewACI.setImageResource(R.drawable.cell_signal_status_green);
                 break;
-            case "GOOD":
-                imageViewACI.setImageResource(R.drawable.cell_signal_status_yellow);
-                break;
             case "AVERAGE":
-                imageViewACI.setImageResource(R.drawable.cellsignal_status_orange);
+                imageViewACI.setImageResource(R.drawable.cell_signal_status_yellow);
                 break;
             case "BAD":
                 imageViewACI.setImageResource(R.drawable.cell_signal_status_red);
                 break;
             case "VERY_BAD":
-                imageViewACI.setImageResource(R.drawable.cell_signal_status_red);
+                imageViewACI.setImageResource(R.drawable.cell_signal_status_gray);
                 break;
             case "NONE":
                 imageViewACI.setImageResource(R.drawable.cell_no_signal_status);
@@ -295,7 +305,7 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
                 if (! showRationale) {
                     // user also CHECKED "never ask again"
                     //Take user to settings screen
-                    Toast.makeText(getApplicationContext(),"Location Permission is required to complete the task",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),"Location Permission is required to complete the task",Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
                     intent.setData(uri);
@@ -303,7 +313,7 @@ public class AdvancedCellInfoActivity extends AppCompatActivity {
 
                 } else {
                     // user did NOT check "never ask again"
-                    Toast.makeText(getApplicationContext(),"Location Permission is required to complete the task",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),"Location Permission is required to complete the task",Toast.LENGTH_SHORT).show();
                     ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_PERMISSION);
                 }
             }
