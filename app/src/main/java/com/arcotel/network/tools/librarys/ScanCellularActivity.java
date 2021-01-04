@@ -286,13 +286,13 @@ public class ScanCellularActivity {
                             strength.add(cellSignalStrengthWcdma.getDbm());
                             strength.add(cellSignalStrengthWcdma.getAsuLevel());
                             strength.add(cellSignalStrengthWcdma.getLevel());
+
                         } else if (cellInfos.get(i) instanceof CellInfoGsm) {
                             //Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoGsm");
                             CellInfoGsm cellInfogsm = (CellInfoGsm) cellInfos.get(i);
                             CellSignalStrengthGsm cellSignalStrengthGsm = cellInfogsm.getCellSignalStrength();
                             strength.add(cellSignalStrengthGsm.getDbm());
                             strength.add(cellSignalStrengthGsm.getAsuLevel());
-                            strength.add(cellSignalStrengthGsm.getLevel());
                         } else if (cellInfos.get(i) instanceof CellInfoLte) {
                             //Log.d("ANALI>AR ESTO "," el valor de phoneNetworType es CellInfoLte");
                             CellInfoLte cellInfoLte = (CellInfoLte) cellInfos.get(i);

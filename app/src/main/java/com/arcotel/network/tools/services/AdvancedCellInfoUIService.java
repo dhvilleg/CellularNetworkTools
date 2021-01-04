@@ -101,7 +101,7 @@ public class AdvancedCellInfoUIService extends Service {
                         }
                         else {
                             signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneNetwork);
-                            strengthTxtString = "RSSI: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
+                            strengthTxtString = "RSCP: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
                         }
                         if(cellIdInfo.isEmpty() ){
                             signalQuality = "BAD";
@@ -135,7 +135,7 @@ public class AdvancedCellInfoUIService extends Service {
                         }
                         else {
                             signalQuality = scanCellularActivity.getSignalQuality(strengthInfo.get(0),phoneNetwork);
-                            strengthTxtString = "RSSI: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
+                            strengthTxtString = "Rx Level: "+strengthInfo.get(0)+"dBm\nASU: "+strengthInfo.get(1)+"dBm";
                         }
                         if(cellIdInfo.isEmpty() ){
                             signalQuality = "BAD";
