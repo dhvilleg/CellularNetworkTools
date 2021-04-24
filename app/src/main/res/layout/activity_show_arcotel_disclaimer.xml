@@ -18,7 +18,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="94dp"
         android:layout_marginRight="94dp"
-        android:text="Acerca de Arcotel Network Tools"
+        android:text="Acerca de FDM Network Tools"
         android:textAppearance="@style/TextoPequeTechGray"
         android:textColor="@color/textColor"
 

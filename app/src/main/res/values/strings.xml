@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Arcotel Network Tools</string>
+    <string name="app_name">FDM Network Tools</string>
     <string name="tab_network_info">Network</string>
     <string name="tab_location_dev">Speed Test</string>
     <string name="tab_device_information">Dev Info</string>
@@ -35,13 +35,13 @@
 
     <string name="google_maps_key">AIzaSyCV6-sS6GyFn4AFNBjdU-Bz0xjk1wq-kl4</string>
     
-    <!-- Arcotel Network tool disclaimer-->
-    <string name="ant_about">Esta aplicación ha sido desarrollada para que los usuarios De Telefonía Móvil (SMA) en el Ecuador, sean parte activa del monitoreo y mejora de la calidad del servicio desde un punto de vista de la QoE (Calidad de la Experiencia). Los resultados de estas mediciones serán analizadas posteriormente para la toma de decisiones y estarán disponibles en la URL: https://www.arcotel.gob.ec/.</string>
-    <string name="ant_disclaimer">La APP colecta datos relacionados a niveles de cobertura/velocidad de internet/ubicación de la prueba y las envía a los servidores de Arcotel. Es una aplicación en segundo plano que no accede a información personal ni sensible relacionada con el usuario.</string>
-    <string name="ant_copyright">Copyright 2020. Arcotel Network Tools es un producto desarrollado por FDM-TECH para INFOVISTA. Toda la propiedad intelectual de la APP, pertenece a la ARCOTEL y solo puede ser utilizada por la ARCOTEL y por los desarrolladores de la APP, bajo la autorización de la Agencia\nhttps://fdm-tech.com/.</string>
-    <string name="ant_fooder">En caso de reclamos por mala calidad de servicio, llamar al 1800 567 567 o abrir un ticket en:  https://reclamoconsumidor.arcotel.gob.ec/ y llenar el formulario</string>
+    <!-- FDM Network tool disclaimer-->
+    <string name="ant_about">Esta aplicación ha sido desarrollada para que los usuarios De Telefonía Móvil (SMA) en el Ecuador, sean parte activa del monitoreo y mejora de la calidad del servicio desde un punto de vista de la QoE (Calidad de la Experiencia).</string>
+    <string name="ant_disclaimer">La APP colecta datos relacionados a niveles de cobertura/velocidad de internet/ubicación de la prueba y las envía a los servidores de FDM. Es una aplicación en segundo plano que no accede a información personal ni sensible relacionada con el usuario.</string>
+    <string name="ant_copyright">Copyright 2020. FDM Network Tools es un producto desarrollado por FDM-TECH. Toda la propiedad intelectual de la APP, pertenece a la FDM y solo puede ser utilizada por la FDM y por los desarrolladores de la APP,\nhttps://fdm-tech.com/.</string>
+    <string name="ant_fooder"></string>
 
-    <!-- Arcotel Network tool Main Activity-->
+    <!-- FDM Network tool Main Activity-->
     <string name="ant_main_principal_button">Preparando servicios...</string>
 
     <string name="get_information">Get Information</string>
@@ -99,7 +99,7 @@
     <string name="attachment_summary_on">La información colectada se subirá usando la red Móvil
     </string>
     <string name="attachment_summary_off">La información colectada se subirá usando la red Wifi</string>
-    <string name="title_activity_show_arcotel_disclaimer">ShowArcotelDisclaimerActivity</string>
+    <string name="title_activity_show_FDM_disclaimer">ShowFDMDisclaimerActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
